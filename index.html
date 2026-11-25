@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>FRAME Studio Mobile 4.0</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,">
+<title>FRAME Studio Mobile 5.0</title>
 <style>
 :root{
   --bg:#090b0f;
@@ -331,23 +331,23 @@ select,.ghost-input{
   .preview-shell{max-width:520px;margin:0 auto;box-shadow:0 0 0 1px rgba(255,255,255,.04),0 30px 80px rgba(0,0,0,.45)}
   body{background:#040608}
 }
+
+/* 5.0: independently sized viewfinder and controls */
+html,body{height:100%;overflow:hidden}.app{height:100dvh;min-height:0}.preview-shell{height:100%;min-height:0;max-width:none;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);background:#080b0e;overflow:hidden}.topbar{position:static;flex:none;padding:5px 10px;align-items:center;gap:8px}.brand{padding:0;background:none;border:0;box-shadow:none;backdrop-filter:none;gap:7px;min-width:0}.brand-mark{width:29px;height:29px;border-radius:9px}.brand small{font-size:10px}.brand-title{font-size:13px}.top-actions{gap:6px}.icon-btn{width:42px;height:42px;border-radius:12px;box-shadow:none;backdrop-filter:none}.icon-btn.primary{padding:0 9px;font-size:11px;white-space:nowrap}.floating-meta{position:static;padding:0 10px 4px;flex:none;gap:5px;flex-wrap:nowrap;overflow:hidden}.chip{padding:3px 7px;min-height:22px;background:#151a20;border:0;backdrop-filter:none;min-width:0}.chip strong{font-size:10px;overflow:hidden;text-overflow:ellipsis}.stage{flex:1;min-height:0;display:grid;place-items:center;overflow:hidden;background:#000}.finder{position:relative;overflow:hidden;background:#10151b;width:1px;height:1px;max-width:100%;max-height:100%}.finder video,.finder img,.finder canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.preview-mask{display:none}.empty{padding:8px}.empty-card{padding:12px;background:none;border:0;box-shadow:none;backdrop-filter:none}.empty .big{font-size:30px}.empty h2{font-size:15px}.empty .helper{font-size:11px}.empty .action-row{gap:6px}.empty .primary-btn,.empty .soft-btn{min-height:36px;font-size:12px}.coachcard{position:static;flex:none;margin:5px 10px 0;padding:5px 8px;border-radius:9px;gap:8px;background:#151a20;box-shadow:none;backdrop-filter:none;align-items:center;min-height:43px}.coach-arrow{width:30px;height:30px;border-radius:8px;font-size:18px}.coach-body{min-width:0}.coach-body strong{font-size:12px;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.coach-body .helper{font-size:10px;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.inline-caption{position:static;flex:none;font-size:10px;height:16px;line-height:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin:0 10px}.controls{position:static;flex:none;padding:0 10px 4px}.quickbar{gap:5px;padding:0 0 3px}.quick-btn{min-height:38px;padding:0 10px;border-radius:10px;font-size:11px;backdrop-filter:none}.modes-wrap{padding:0;margin:0 0 3px;border:0;background:none;backdrop-filter:none}.modes{gap:4px;scroll-snap-type:x proximity}.mode-btn{padding:10px 11px;font-size:12px;border-radius:10px;scroll-snap-align:center;min-height:38px}.shutterbar{grid-template-columns:44px minmax(0,1fr) 44px;gap:5px}.side-col{gap:1px}.side-btn{width:42px;height:42px;border-radius:12px;font-size:18px;backdrop-filter:none}.side-col small{font-size:9px}.shutter-center{gap:9px}.shutter-center .icon-btn{width:42px;height:42px;flex:none}.shot-wrap{width:66px;height:66px;flex:none;border-width:2px;box-shadow:none}.shot-btn{width:54px;height:54px;color:#fff}.drawer{visibility:hidden;pointer-events:none;transform:translateY(105%);max-height:80dvh;max-width:580px;margin:auto}.drawer.open{visibility:visible;pointer-events:auto;transform:translateY(0)}.drawer-head{display:flex;justify-content:space-between;align-items:center;padding:5px 14px}.drawer-head button{width:44px;height:44px;border-radius:12px;background:#202733}.drawer-body{max-height:calc(80dvh - 110px)}.scrim{position:fixed;inset:0;background:#0009;z-index:11}.gallery-grid img,.gallery-grid video{position:static}.toast{bottom:calc(env(safe-area-inset-bottom) + 85px)}.section-card{padding:12px}.tab-btn{min-height:44px}.quick-btn:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(min-width:820px){.preview-shell{max-width:680px;margin:auto}.drawer{max-width:580px}}
+@media(max-height:550px) and (orientation:landscape){.preview-shell{display:grid;grid-template-columns:minmax(0,1fr) 260px;grid-template-rows:auto auto minmax(0,1fr) auto;max-width:none}.topbar{grid-column:1/3}.floating-meta{grid-column:1/3}.stage{grid-column:1;grid-row:3}.controls{grid-column:2;grid-row:3/5;align-self:center}.coachcard{grid-column:1;grid-row:4;margin-bottom:4px}.inline-caption{display:none}.quickbar{flex-wrap:wrap}.quick-btn{min-height:32px}.empty .helper{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="preview-shell" id="finder" style="aspect-ratio:3/4">
-    <video id="v" autoplay playsinline muted class="hidden"></video>
-    <img id="img" class="hidden" alt="Ảnh đã mở">
-    <canvas id="overlay"></canvas>
-    <canvas id="bokehPreview" class="hidden"></canvas>
-    <div class="preview-mask"></div>
-
+  <div class="preview-shell">
     <div class="topbar">
       <div class="brand">
         <div class="brand-mark">F</div>
         <div>
           <div class="brand-title">FRAME Studio</div>
-          <small>Mobile 4.0 · camera-first UI</small>
+          <small>Mobile 5.0</small>
         </div>
       </div>
       <div class="top-actions">
@@ -362,6 +362,14 @@ select,.ghost-input{
       <div class="chip"><strong id="aiState">AI chưa tải</strong></div>
     </div>
 
+
+<div class="stage"><div id="finder" class="finder">
+    <video id="v" autoplay playsinline muted class="hidden"></video>
+    <img id="img" class="hidden" alt="Ảnh đã mở">
+    <canvas id="overlay"></canvas>
+    <canvas id="bokehPreview" class="hidden"></canvas>
+    <div class="preview-mask"></div>
+
     <div id="empty" class="empty">
       <div class="empty-card">
         <div class="big">◎</div>
@@ -374,6 +382,7 @@ select,.ghost-input{
       </div>
     </div>
 
+    </div></div>
     <div class="coachcard">
       <div class="coach-arrow" id="arrow">◎</div>
       <div class="coach-body">
@@ -420,7 +429,7 @@ select,.ghost-input{
 </div>
 
 <div class="drawer" id="drawer">
-  <div class="drawer-handle"></div>
+  <div class="drawer-head"><strong>Công cụ camera</strong><button id="drawerClose" aria-label="Đóng công cụ">✕</button></div>
   <div class="tabs">
     <button class="tab-btn on" data-panel="analysis">Phân tích</button>
     <button class="tab-btn" data-panel="portrait">Chân dung</button>
@@ -520,7 +529,7 @@ select,.ghost-input{
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div id="scrim" class="scrim" hidden></div><div class="toast" id="toast"></div>
 
 <script>
 const $ = id => document.getElementById(id);
@@ -576,7 +585,10 @@ function toast(msg){
   toastTimer = setTimeout(()=>el.classList.remove('show'), 2600);
 }
 function status(msg){ $('status').textContent = msg; }
-function setDrawer(open){ $('drawer').classList.toggle('open',open); }
+function setDrawer(open){ $('drawer').classList.toggle('open',open); $('scrim').hidden=!open; $('drawerToggle').setAttribute('aria-expanded',String(open)); }
+$('drawerClose').onclick=()=>setDrawer(false); $('scrim').onclick=()=>setDrawer(false); document.addEventListener('keydown',e=>{if(e.key==='Escape')setDrawer(false)});
+function fitFinder(){const a=document.querySelector('.stage'), r=ratios[ratioIndex].value, w=Math.min(a.clientWidth,a.clientHeight*r); $('finder').style.width=w+'px'; $('finder').style.height=w/r+'px'; drawOverlay();}
+new ResizeObserver(fitFinder).observe(document.querySelector('.stage')); 
 function showPanel(name){
   document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.toggle('on', btn.dataset.panel===name));
   document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on', p.id==='panel-'+name));
@@ -604,9 +616,9 @@ function setMode(m, btn){
   $('shot').classList.toggle('red', mode==='Video');
   $('tip').textContent = 'Đang đánh giá khung hình';
   $('why').textContent = 'Công cụ và gợi ý đã được tối giản để ưu tiên thao tác trên điện thoại.';
-  gen++; last = null; dirty = true; nextAI = 0; pauseUntil = performance.now() + 280;
+  gen++; objects=[]; last = null; dirty = true; nextAI = 0; pauseUntil = performance.now() + 280;
   oc.clearRect(0,0,ov.width,ov.height);
-  syncModeDependentPanels();
+  syncModeDependentPanels(); if(mode==='Pro')showPanel('pro'); if(btn)btn.scrollIntoView({block:'nearest',inline:'center',behavior:'instant'});
 }
 registerModes();
 
@@ -635,7 +647,7 @@ function crop(){
   const [w,h] = dims();
   const fw = $('finder').clientWidth;
   const fh = $('finder').clientHeight;
-  const r = fw/Math.max(1,fh);
+  const r = ratios[ratioIndex].value;
   const cw = Math.min(w, h*r);
   const ch = Math.min(h, cw/r);
   return [(w-cw)/2,(h-ch)/2,cw,ch];
@@ -735,9 +747,7 @@ $('grid').onclick = ()=>{ gridOn = !gridOn; $('grid').classList.toggle('on', gri
 $('ratio').onclick = ()=>{
   ratioIndex = (ratioIndex+1)%ratios.length;
   $('ratio').textContent = ratios[ratioIndex].label;
-  $('finder').style.aspectRatio = ratios[ratioIndex].value;
-  dirty = true;
-  setTimeout(drawOverlay,40);
+  clearBokeh(); resetAnalysis(); fitFinder();
 };
 $('timer').onclick = ()=>{
   timerValue = ({0:3,3:5,5:10,10:0})[timerValue];
@@ -746,7 +756,7 @@ $('timer').onclick = ()=>{
 $('perf').onclick = ()=>{
   profileIndex = (profileIndex+1)%profiles.length;
   $('perf').textContent = '⚡ ' + currentProfile().name;
-  nextAI=0; dirty=true;
+  gen++; objects=[]; last=null; nextAI=0; dirty=true;
   if(!currentProfile().ai){ $('aiState').textContent='AI tạm tắt'; $('aiBadge').textContent='AI tạm tắt'; }
   else if(model){ $('aiState').textContent='AI sẵn sàng'; $('aiBadge').textContent='AI sẵn sàng'; }
 };
@@ -781,7 +791,7 @@ function onOrientation(e){
   const x = -Math.cos(b)*Math.sin(g), y=Math.sin(b), z=Math.cos(b)*Math.cos(g);
   pitch = Math.asin(cl(z,-1,1))*180/Math.PI;
   roll = Math.atan2(x*Math.cos(a)+y*Math.sin(a), y*Math.cos(a)-x*Math.sin(a))*180/Math.PI;
-  if(Math.abs(pitch)>75) roll = null;
+  roll=((roll+270)%180)-90; if(Math.abs(pitch)>75) roll=null;
   $('level').textContent = 'Cúi ' + Math.round(pitch) + '°' + (roll==null ? '' : (' · nghiêng ' + Math.round(roll) + '°'));
 }
 function buildProControls(){
@@ -847,7 +857,7 @@ function detectScene(avg, horizon, deskScore){
   if(food) return 'Đồ ăn';
   if(product) return 'Sản phẩm';
   if(avg < 72) return 'Đêm';
-  if(horizon != null) return 'Phong cảnh';
+  // A horizontal edge alone cannot identify a landscape.
   return 'Ảnh';
 }
 function deskMeasure(gray, W, H){
@@ -891,13 +901,13 @@ function deskMeasure(gray, W, H){
 }
 async function detectObjects(){
   if(!model || !source || !dims()[0] || detecting) return;
-  detecting = true;
+  detecting = true; const token=gen;
   try{
     const size = currentProfile().size >= 160 ? 320 : 224;
-    const r = $('finder').clientWidth / Math.max(1,$('finder').clientHeight);
+    const r = ratios[ratioIndex].value;
     frame(inf, ifc, r>=1?size:Math.round(size*r), r>=1?Math.round(size/r):size);
     const res = await model.detect(inf, 12, .45);
-    objects = res.map(o=>({name:o.class, score:o.score, b:[o.bbox[0]/inf.width, o.bbox[1]/inf.height, o.bbox[2]/inf.width, o.bbox[3]/inf.height]}));
+    if(token!==gen || !currentProfile().ai)return; objects = res.map(o=>({name:o.class, score:o.score, b:[o.bbox[0]/inf.width, o.bbox[1]/inf.height, o.bbox[2]/inf.width, o.bbox[3]/inf.height]}));
   }catch(e){
     $('aiState').textContent = 'AI lỗi / cơ bản';
     $('aiBadge').textContent = 'AI lỗi / cơ bản';
@@ -905,7 +915,7 @@ async function detectObjects(){
 }
 function analyze(){
   const p = currentProfile();
-  if(!frame(sample, sc, p.size, p.size, 'none')) return;
+  const r=ratios[ratioIndex].value; if(!frame(sample,sc,r>=1?p.size:Math.round(p.size*r),r>=1?Math.round(p.size/r):p.size,'none'))return;
   const img = sc.getImageData(0,0,sample.width,sample.height);
   const data = img.data;
   const W = sample.width, H = sample.height;
@@ -914,8 +924,8 @@ function analyze(){
   const hist = new Array(32).fill(0);
   let edgeSum=0;
   const horizonBins = new Float64Array(61);
-  for(let y=1;y<H-1;y++){
-    for(let x=1;x<W-1;x++){
+  for(let y=0;y<H;y++){
+    for(let x=0;x<W;x++){
       const i = (y*W+x)*4;
       const g = (.2126*data[i] + .7152*data[i+1] + .0722*data[i+2])|0;
       const gi = y*W+x;
@@ -927,7 +937,7 @@ function analyze(){
   }
   const N = W*H;
   avg /= N;
-  let horMag=0, horPos=0, bestMag=0;
+  const rows=new Float64Array(H), coverage=new Uint16Array(H);
   for(let y=2;y<H-2;y++){
     for(let x=2;x<W-2;x++){
       const i = y*W+x;
@@ -940,23 +950,22 @@ function analyze(){
         if(ang<0) ang+=180;
         if(ang>90) ang-=180;
         if(Math.abs(Math.abs(ang)-90) <= 15){
-          horMag += mag;
-          horPos += y * mag;
+          rows[y]+=mag; coverage[y]++;
         }
       }
     }
   }
-  const horizon = horMag > 1000 ? horPos/(horMag*H) : null;
+  let bestY=0,bestStrength=0; for(let y=Math.ceil(H*.12);y<Math.floor(H*.88);y++){let strength=rows[y]+.5*(rows[y-1]+rows[y+1]);if(coverage[y]>=W*.48 && strength>bestStrength){bestStrength=strength;bestY=y}} const horizon=bestStrength>W*35?bestY/H:null;
   const desk = deskMeasure(gray,W,H);
   const scene = detectScene(avg,horizon,desk);
   const subj = chooseSubject(scene);
   let b=null, cx=.5, cy=.5, tx=.5, ty=.5, reliable=false;
-  if(subj){
+  if(subj && (scene!=='Chân dung'||subj.name==='person') && (scene!=='Đồ ăn'||foodSet.has(subj.name)) && scene!=='Phong cảnh' && scene!=='Desk / Gaming'){
     b = subj.b;
     cx = b[0]+b[2]/2; cy = b[1]+b[3]/2;
     reliable = true;
     if(scene==='Chân dung' || scene==='Sản phẩm' || scene==='Đồ ăn'){
-      tx = cx<.5 ? 2/3 : 1/3;
+      tx = cx<=.5 ? 1/3 : 2/3;
       ty = scene==='Đồ ăn' ? .60 : .40;
     }else if(scene==='Desk / Gaming'){
       if($('deskStyle').value==='sym'){tx=.5;ty=.48;}
@@ -966,34 +975,35 @@ function analyze(){
       tx=.5; ty = horizon!=null && horizon<.5 ? .65 : .35;
     }
   }
+  if(scene==='Desk / Gaming'&&desk.box){b=desk.box;cx=b[0]+b[2]/2;cy=b[1]+b[3]/2;tx=$('deskStyle').value==='angle'?(cx<=.5?.42:.58):.5;ty=.5;reliable=true;}
   const dx = cx-tx, dy = cy-ty;
   const shadowScore = cl(1-lo/N*1.8);
   const highlightScore = cl(1-hi/N*2);
   const edgeScore = cl((edgeSum/N)/18);
-  const centerScore = reliable ? cl(1-Math.hypot(dx,dy)*1.7) : .55;
-  const horizonScore = horizon==null ? .55 : cl(1-Math.abs((horizon<.5?1/3:2/3)-horizon)*3.2);
+  const centerScore = reliable ? cl(1-Math.hypot(dx,dy)*1.7) : null;
+  const horizonScore = horizon==null ? null : cl(1-Math.abs((horizon<.5?1/3:2/3)-horizon)*3.2);
   const deskScore = scene==='Desk / Gaming' ? [desk.balance??.55, desk.screenClip==null?.55:cl(1-desk.screenClip*2.3), desk.clipped?.2:.9, desk.skew==null?.55:cl(1-Math.abs(desk.skew)/11)].reduce((a,b)=>a+b,0)/4 : null;
 
-  const components = [shadowScore, highlightScore, edgeScore, centerScore];
-  if(scene==='Phong cảnh') components.push(horizonScore);
-  if(scene==='Desk / Gaming' && deskScore!=null) components.push(deskScore);
+  const components = [shadowScore, highlightScore, centerScore].filter(x=>x!=null);
+  if(scene==='Phong cảnh'&&horizonScore!=null) components.push(horizonScore);
+  if(scene==='Desk / Gaming'&&desk.count&&deskScore!=null) components.push(deskScore);
   let score = components.reduce((a,b)=>a+b,0)/components.length;
   if(scene==='Đêm') score = (score*.72 + cl(avg/80)*.28);
   score = cl(score);
 
   const issues = [];
   function add(p,arrow,title,why){ issues.push({p,arrow,title,why}); }
-  if(roll!=null && Math.abs(roll)>3.5) add(.98,'↺','Giữ điện thoại cân hơn','Khung đang nghiêng khoảng '+Math.round(roll)+'° so với mặt phẳng ngang.');
-  if(scene==='Desk / Gaming' && desk.skew!=null && Math.abs(desk.skew)>3) add(.95,desk.skew>0?'↺':'↻','Căn thẳng mép màn hình / bàn','Đường ngang trong setup đang hơi nghiêng.');
+  if(source===v && roll!=null && Math.abs(roll)>3.5) add(.98,'↺','Giữ điện thoại cân hơn','Khung đang nghiêng khoảng '+Math.round(roll)+'° so với mặt phẳng ngang.');
+  if(scene==='Desk / Gaming' && $('deskStyle').value==='sym' && desk.count && desk.skew!=null && Math.abs(desk.skew)>3) add(.95,desk.skew>0?'↺':'↻','Căn thẳng mép màn hình / bàn','Đường ngang trong setup đang hơi nghiêng.');
   if(scene==='Desk / Gaming' && desk.clipped) add(.94,'−','Lùi máy một chút','Một phần thiết bị đang chạm sát mép ảnh.');
   if(scene==='Desk / Gaming' && desk.screenClip!=null && desk.screenClip>.18) add(.88,'☼','Giảm cháy sáng màn hình','Vùng hiển thị của màn hình đang quá sáng, dễ mất chi tiết.');
-  if(scene==='Phong cảnh' && horizon!=null && Math.abs((horizon<.5?1/3:2/3)-horizon)>.10) add(.86,horizon<.5?'↑':'↓',horizon<.5?'Nâng góc máy':'Hạ góc máy','Đường ngang đang lệch khỏi vùng bố cục 1/3.');
-  if(reliable && Math.hypot(dx,dy)>.085) add(.82,Math.abs(dx)>Math.abs(dy)?(dx>0?'←':'→'):(dy>0?'↑':'↓'),Math.abs(dx)>Math.abs(dy)?(dx>0?'Dịch máy sang trái':'Dịch máy sang phải'):(dy>0?'Nâng máy lên':'Hạ máy xuống'),'Đưa chủ thể về vùng bố cục gợi ý để ảnh cân hơn.');
+  if(scene==='Phong cảnh' && horizon!=null && Math.abs((horizon<.5?1/3:2/3)-horizon)>.10) add(.86,horizon>(horizon<.5?1/3:2/3)?'↓':'↑',horizon>(horizon<.5?1/3:2/3)?'Hạ góc máy':'Nâng góc máy','Đường ngang đang lệch khỏi vùng bố cục 1/3.');
+  if(reliable && Math.hypot(dx,dy)>.085) add(.82,Math.abs(dx)>Math.abs(dy)?(dx>0?'→':'←'):(dy>0?'↓':'↑'),Math.abs(dx)>Math.abs(dy)?(dx>0?'Xoay máy sang phải':'Xoay máy sang trái'):(dy>0?'Cúi máy xuống':'Ngẩng máy lên'),'Đưa chủ thể về vùng bố cục gợi ý để ảnh cân hơn.');
   if(avg<54 && scene!=='Đêm') add(.70,'☀','Tăng sáng hoặc tìm nguồn sáng phụ','Khung đang khá tối.');
   if(hi/N>.14 && scene!=='Desk / Gaming') add(.74,'☼','Giảm vùng cháy sáng','Một số vùng sáng đang mất chi tiết.');
-  if(scene==='Đồ ăn' && pitch!=null && pitch<20) add(.60,'↘','Thử góc 45°','Góc cúi hiện tại phù hợp chuyển dần sang góc 45° để món ăn có chiều sâu hơn.');
+  if(scene==='Đồ ăn' && source===v && pitch!=null && pitch<20) add(.60,'↘','Thử góc 45°','Góc cúi hiện tại phù hợp chuyển dần sang góc 45° để món ăn có chiều sâu hơn.');
   if(scene==='Chân dung' && b && b[3]>.92) add(.72,'−','Lùi nhẹ để thoáng khung','Chủ thể đang khá sát khung, dễ bí bố cục.');
-  if(!issues.length) add(.50,'✓','Khung hình ổn định','Chưa phát hiện lỗi nổi bật theo các chỉ số đang đo.');
+  if(scene==='Desk / Gaming'&&$('deskStyle').value==='top'&&source===v&&pitch!=null&&Math.abs(pitch-90)>8)add(.9,'↘','Hướng máy xuống mặt bàn','Mục tiêu 90° so với phương ngang; mặt bàn cần nằm ngang.'); if(!issues.length) add(.50,reliable?'✓':'◎',reliable?'Bố cục nằm trong vùng gợi ý':'Chưa đủ dữ liệu bố cục',reliable?'Kiểm tra lại chủ thể trước khi chụp.':'Chưa xác định được chủ thể hoặc đường ngang đáng tin cậy.');
   issues.sort((a,b)=>b.p-a.p);
   const best = issues[0];
 
@@ -1006,8 +1016,8 @@ function analyze(){
   ];
   if(scene==='Phong cảnh') metricRows.push(['Đường chân trời', horizonScore]);
   if(scene==='Desk / Gaming' && deskScore!=null) metricRows.push(['Setup desk', deskScore]);
-  $('metrics').innerHTML = metricRows.map(([name,val])=>`<div><div class="reading"><span>${name}</span><strong>${Math.round((val??0)*100)}%</strong></div><div class="bar"><i style="width:${Math.round((val??0)*100)}%"></i></div></div>`).join('');
-  $('score').textContent = Math.round(score*100) + '/100';
+  $('metrics').innerHTML = metricRows.map(([name,val])=>`<div><div class="reading"><span>${name}</span><strong>${val==null?'—':Math.round(val*100)+'%'}</strong></div><div class="bar"><i style="width:${Math.round((val??0)*100)}%"></i></div></div>`).join('');
+  $('score').textContent = (reliable||(scene==='Phong cảnh'&&horizon!=null)) ? Math.round(score*100) + '/100' : '—';
   $('subject').textContent = scene==='Desk / Gaming' && desk.count ? (desk.count + ' thiết bị') : (subj?.name || (reliable?'Chủ thể':'Chưa xác định'));
   $('confidence').textContent = subj?.score ? (Math.round(subj.score*100) + '% độ tin cậy AI') : 'Phân tích thị giác';
   $('tip').textContent = best.title;
@@ -1043,7 +1053,7 @@ function drawOverlay(){
     }
   }
   if(!last) return;
-  if(last.horizon!=null) line(0,last.horizon,1,last.horizon,'rgba(255,211,107,.85)');
+  if(last.scene==='Phong cảnh'&&last.horizon!=null) line(0,last.horizon,1,last.horizon,'rgba(255,211,107,.85)');
   if(last.b){
     oc.strokeStyle = 'rgba(255,255,255,.76)';
     oc.strokeRect(last.b[0]*W, last.b[1]*H, last.b[2]*W, last.b[3]*H);
@@ -1060,12 +1070,12 @@ async function loop(){
     const now = performance.now();
     if(document.hidden || !source || !dims()[0] || busy || bokehShown || now<pauseUntil || rec?.state==='recording') return;
     if(currentProfile().ai && !model && !aiAttempted){ aiAttempted = true; loadingAI = true; loadAI().finally(()=>{ loadingAI=false; dirty=true; nextAI=0; }); }
-    if(now >= nextAnalysis && (source===v || dirty || source===im)){
+    if(!loadingAI && now >= nextAnalysis && (source===v || dirty)){
       dirty = false;
       analyze();
       nextAnalysis = performance.now() + currentProfile().interval;
     }
-    if(currentProfile().ai && model && now >= nextAI && !detecting && (source===v || nextAI===0 || source===im)){
+    if(currentProfile().ai && model && now >= nextAI && !detecting && (source===v || nextAI===0)){
       const started = performance.now();
       await detectObjects();
       const cost = performance.now() - started;
@@ -1089,10 +1099,10 @@ function saveBlob(blob, ext){
   a.appendChild(media);
   $('gallery').prepend(a);
   a.click();
-  setDrawer(true); showPanel('gallery');
   toast('Đã tạo tệp ' + ext.toUpperCase());
 }
 async function captureStill(){
+  if(!source||!dims()[0])return toast('Bật camera hoặc mở ảnh trước');
   const c = document.createElement('canvas');
   const ctx = c.getContext('2d');
   const [, , w, h] = crop();
@@ -1184,6 +1194,7 @@ async function renderBokeh(canvas){
     });
     seg.send({image:temp}).catch(e=>{ clearTimeout(timeout); reject(e); });
   });
+  const md=mask.getContext('2d').getImageData(0,0,mask.width,mask.height).data;let fgCount=0;for(let i=3;i<md.length;i+=4)if(md[i]>128)fgCount++;if(fgCount<mask.width*mask.height*.012||fgCount>mask.width*mask.height*.985)throw Error('Không đủ vùng người đáng tin cậy');
   const out = document.createElement('canvas'); out.width = w; out.height = h;
   const o = out.getContext('2d');
   const radius = Math.max(1, Math.min(40, Math.min(w,h)*.024*(1.4/f - 1.4/16)/(1-1.4/16)));
@@ -1211,14 +1222,14 @@ $('previewBokeh').onclick = async ()=>{
     bokehShown = true;
     bp.classList.remove('hidden');
     $('originalBokeh').classList.remove('hidden');
-    setDrawer(true); showPanel('portrait');
+    setDrawer(false);
   }catch(e){
     $('bokehStatus').textContent = e.message || 'Không thể tạo xem thử xóa phông';
   }finally{ busy = false; }
 };
 
 // initial UI state
-showPanel('analysis');
+showPanel('analysis'); fitFinder();
 status('Chưa có nguồn hình ảnh.');
 $('fval').textContent = 'ƒ/' + apertures[+$('aperture').value];
 </script>
