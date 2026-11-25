@@ -1,16 +1,1226 @@
-<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Frame / Camera Lab</title><style>
-*{box-sizing:border-box}body{margin:0;background:#090b0e;color:#f3f5f7;font:14px system-ui;--a:#c4f76c}button,select,input{font:inherit}button,select{color:inherit;background:#1b2026;border:1px solid #303740;border-radius:12px;padding:10px;cursor:pointer}button.on{color:var(--a);border-color:var(--a)}button:disabled{opacity:.4}header{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #20252a}header b{font-size:22px;letter-spacing:-1px}small,.muted{color:#939da8}.layout{max-width:1350px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;padding:16px}.camera{min-width:0}.finder{position:relative;background:#13171c;overflow:hidden;border-radius:18px;aspect-ratio:4/3;max-height:70dvh;margin:auto;touch-action:manipulation}.finder video,.finder img,.finder canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}.finder canvas{pointer-events:none}.hidden{display:none!important}.empty{position:absolute;inset:0;display:grid;place-content:center;text-align:center;gap:12px;color:#aab2bb}.hud{position:absolute;top:12px;left:12px;right:12px;display:flex;justify-content:space-between;pointer-events:none}.pill{background:#080b10bd;border:1px solid #ffffff20;padding:6px 10px;border-radius:30px;font-size:12px}.coach{position:absolute;bottom:12px;left:12px;right:12px;background:#080b10d9;padding:12px;border-radius:12px;display:flex;gap:12px;align-items:center}.coach strong{font-size:16px}.arrow{font-size:30px;color:var(--a);min-width:35px;text-align:center}.strip{display:flex;gap:7px;overflow:auto;padding:10px 0;scrollbar-width:none}.strip button{white-space:nowrap;flex-shrink:0}.modes{justify-content:safe center}.modes button{border:0;background:none;color:#a1a8b0}.modes button.on{color:var(--a);font-weight:700}.shutters{display:flex;align-items:center;justify-content:space-around;padding:8px}.shot{width:72px;height:72px;border:4px solid white;border-radius:50%;background:#f5f5f5;box-shadow:inset 0 0 0 5px #101215}.shot.red{background:#f04444}.panel{background:#14181d;border:1px solid #252c33;border-radius:16px;padding:15px;margin-bottom:12px}h2{font-size:15px;margin:0 0 12px}.big{font-size:34px;font-weight:650;color:var(--a);letter-spacing:-2px}.line{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:9px 0}.bar{height:4px;background:#30363d;border-radius:5px;overflow:hidden}.bar i{display:block;background:var(--a);height:100%}.note{font-size:12px;color:#9aa5af;line-height:1.5}.hist{width:100%;height:65px;background:#0c1014;border-radius:8px}.gallery{display:flex;overflow:auto;gap:8px}.gallery img{height:64px;border-radius:8px}.slider{display:grid;grid-template-columns:80px 1fr 45px;gap:6px;align-items:center;margin:12px 0}input[type=range]{width:100%;accent-color:var(--a)}.status{color:#bac5cf;font-size:12px;min-height:18px}.flash{animation:flash .2s}@keyframes flash{50%{opacity:.25}}@media(max-width:760px){header{padding:10px 12px}.layout{display:block;padding:8px}.finder{max-height:57dvh;aspect-ratio:3/4;border-radius:12px}.panel{margin-top:10px}.modes{justify-content:safe center}.shutters{padding:4px}.shot{width:65px;height:65px}.coach{padding:9px}.coach strong{font-size:14px}aside{display:none}aside.open{display:block}} </style></head><body><header><div><b>FRAME<span style="color:var(--a)">.</span></b> <small>CAMERA LAB / 2.0</small></div><button id="start">Bật camera</button></header><main class="layout"><section class="camera"><div class="strip"><button id="grid" class="on">▦ Lưới</button><button id="ratio">3:4</button><button id="timer">◷ Tắt</button><button id="motion">⊕ Cảm biến</button><button id="torch">Đèn</button><button id="panel">Phân tích / Pro</button></div><div id="finder" class="finder" style="aspect-ratio:3/4"><video id="v" autoplay muted playsinline class="hidden"></video><img id="img" class="hidden"><canvas id="overlay"></canvas><div id="empty" class="empty"><div style="font-size:44px">◎</div><b>Khung ngắm chưa hoạt động</b><span>Bật camera hoặc mở ảnh để bắt đầu.</span></div><div class="hud"><span class="pill" id="scene">AUTO</span><span class="pill" id="level">Góc máy —</span></div><div class="coach"><div class="arrow" id="arrow">◎</div><div><strong id="tip">Sẵn sàng phân tích</strong><div class="note" id="why">Hướng dẫn thay đổi theo khung hình thực tế.</div></div></div></div><div class="strip modes" id="modes"></div><div class="shutters"><button id="upload">▧ Mở ảnh</button><button id="shot" class="shot" aria-label="Chụp"></button><button id="flip">⇄ Đổi cam</button><button id="stop">■ Tắt</button></div><div class="status" id="status"></div><div class="gallery" id="gallery"></div><input id="file" type="file" accept="image/*" hidden></section><aside id="aside"><div class="panel"><h2>Phân tích trực tiếp <span id="ai" class="muted" style="float:right;font-size:11px">AI chưa tải</span></h2><div class="line"><div><div class="big" id="score">—</div><small>Điểm kỹ thuật tham khảo</small></div><div style="text-align:right"><b id="subject">—</b><br><small id="confidence">Chưa có chủ thể</small></div></div><canvas class="hist" id="hist" width="300" height="65"></canvas><div id="metrics"></div><div class="note" id="details">Chưa có dữ liệu ảnh.</div><button id="unlock" style="margin-top:10px">Bỏ khóa chủ thể</button></div><div class="panel"><h2>Điều khiển Pro</h2><div id="pro" class="note">Bật camera để kiểm tra khả năng phần cứng.</div><div class="line">Zoom kỹ thuật số <input id="zoom" type="range" min="1" max="4" step=".1" value="1" style="width:45%"><span id="zval">1×</span></div><div class="line">Phong cách <select id="filter"><option value="none">Gốc</option><option value="contrast(1.12) saturate(1.18)">Rực rỡ</option><option value="grayscale(1)">Mono</option><option value="sepia(.2) saturate(1.1)">Ấm</option><option value="contrast(1.15) saturate(.75)">Cinema</option></select></div><div class="line">Định dạng <select id="format"><option value="image/jpeg">JPEG</option><option value="image/png">PNG</option></select></div><div class="line">Mic video <input id="mic" type="checkbox" checked></div><div class="note">ISO, tốc độ, lấy nét, EV chỉ hiện nếu camera cung cấp. Zoom số cắt ảnh, không thay ống kính. Video lưu luồng gốc, không áp dụng crop/filter.</div></div><div class="panel note">AI COCO-SSD chạy trong trình duyệt, cần Internet để tải mô hình lần đầu. Không gửi khung hình tới máy chủ. Nếu không tải được, dùng vùng nổi bật và khóa chủ thể thủ công. Không có dữ liệu chiều sâu thật.</div></aside></main><script>
-const $=x=>document.getElementById(x),v=$('v'),im=$('img'),ov=$('overlay'),oc=ov.getContext('2d'),cl=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));let source=null,stream=null,facing='environment',mode='Auto',ratio=0,grid=true,timer=0,zoom=1,roll=null,pitch=null,model=null,detecting=false,objects=[],gen=0,last=null,locked=null,prev=null,rec=null,busy=false,recordAudio=null;const ratios=[3/4,9/16,1,4/3,16/9],ratioLabels=['3:4','9:16','1:1','4:3','16:9'];const modes=['Auto','Ảnh','Chân dung','Phong cảnh','Đồ ăn','Sản phẩm','Macro','Đêm','Pro','Video'];const status=t=>$('status').textContent=t;for(const m of modes){let b=document.createElement('button');b.textContent=m;b.onclick=()=>{if(rec?.state==='recording')return;mode=m;document.querySelectorAll('#modes button').forEach(x=>x.classList.toggle('on',x===b));if(m==='Pro')$('aside').classList.add('open');$('shot').classList.toggle('red',m==='Video');};$('modes').append(b);if(m==='Auto')b.classList.add('on')}
-function script(src){return new Promise((ok,no)=>{let s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.append(s)})}async function loadAI(){try{$('ai').textContent='Đang tải AI';await script('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js');await script('https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js');model=await cocoSsd.load({base:'lite_mobilenet_v2'});$('ai').textContent='AI sẵn sàng'}catch(e){$('ai').textContent='AI offline / thị giác cơ bản'}}loadAI();
-function reset(){gen++;objects=[];locked=null;last=null;prev=null}function stop(){if(rec?.state==='recording')rec.stop();stream?.getTracks().forEach(t=>t.stop());stream=null;v.srcObject=null;v.classList.add('hidden');im.classList.add('hidden');source=null;reset();$('empty').classList.remove('hidden');$('start').textContent='Bật camera';$('score').textContent='—';$('tip').textContent='Sẵn sàng phân tích';$('why').textContent='Bật camera hoặc mở ảnh';$('metrics').innerHTML='';$('details').textContent='Chưa có dữ liệu ảnh.';oc.clearRect(0,0,ov.width,ov.height)}async function start(){stop();try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:facing},width:{ideal:1920},height:{ideal:1080}},audio:false});v.srcObject=stream;await v.play();source=v;v.classList.remove('hidden');$('empty').classList.add('hidden');$('start').textContent='Camera đang bật';controls();status('Camera sẵn sàng')}catch(e){status('Không mở được camera. Cần HTTPS/localhost và quyền camera: '+e.message)}}$('start').onclick=()=>stream?stop():start();$('stop').onclick=stop;$('flip').onclick=()=>{facing=facing==='environment'?'user':'environment';start()};$('upload').onclick=()=>$('file').click();$('file').onchange=e=>{let f=e.target.files[0];if(!f)return;stop();let url=URL.createObjectURL(f);im.onload=()=>{source=im;im.classList.remove('hidden');$('empty').classList.add('hidden');URL.revokeObjectURL(url)};im.src=url};$('panel').onclick=()=>$('aside').classList.toggle('open');$('grid').onclick=()=>{grid=!grid;$('grid').classList.toggle('on',grid)};$('ratio').onclick=()=>{ratio=(ratio+1)%ratios.length;$('ratio').textContent=ratioLabels[ratio];$('finder').style.aspectRatio=ratios[ratio];reset()};$('timer').onclick=()=>{timer=({0:3,3:5,5:10,10:0})[timer];$('timer').textContent='◷ '+(timer?timer+'s':'Tắt')};$('zoom').oninput=e=>{zoom=+e.target.value;$('zval').textContent=zoom.toFixed(1)+'×';reset()};$('unlock').onclick=()=>locked=null;$('filter').onchange=()=>{};
-$('motion').onclick=async()=>{try{if(!window.DeviceOrientationEvent)throw Error('Không có cảm biến');if(DeviceOrientationEvent.requestPermission&&await DeviceOrientationEvent.requestPermission()!=='granted')throw Error('Quyền bị từ chối');window.addEventListener('deviceorientation',orientation);$('motion').classList.add('on');status('Đã bật cảm biến; chờ dữ liệu')}catch(e){status(e.message)}};function orientation(e){if(e.beta==null||e.gamma==null)return;let b=e.beta*Math.PI/180,g=e.gamma*Math.PI/180,a=(screen.orientation?.angle??window.orientation??0)*Math.PI/180;let x=-Math.cos(b)*Math.sin(g),y=Math.sin(b),z=Math.cos(b)*Math.cos(g);pitch=Math.asin(cl(z,-1,1))*180/Math.PI;roll=Math.atan2(x*Math.cos(a)+y*Math.sin(a),y*Math.cos(a)-x*Math.sin(a))*180/Math.PI;if(Math.abs(pitch)>75)roll=null;$('level').textContent='Cúi '+Math.round(pitch)+'°'+(roll==null?'':' · nghiêng '+Math.round(roll)+'°')}
-function track(){return stream?.getVideoTracks()[0]}async function apply(k,val){try{let t=track();if(!t)return;await t.applyConstraints({advanced:[{[k]:val}]});status(k+': '+(t.getSettings()[k]??'chưa xác nhận'))}catch(e){status(e.message)}}function controls(){let c=track()?.getCapabilities?.()||{};$('pro').innerHTML='';for(let [k,n] of Object.entries({iso:'ISO',exposureTime:'Tốc độ',exposureCompensation:'EV',focusDistance:'Focus',colorTemperature:'WB (K)',zoom:'Zoom HW'})){let a=c[k];if(!a||a.max<=a.min)continue;let r=document.createElement('div');r.className='slider';let i=document.createElement('input');i.type='range';i.min=a.min;i.max=a.max;i.step=a.step||((a.max-a.min)/100);i.value=track().getSettings()[k]??a.min;let o=document.createElement('span');o.textContent=Number(i.value).toFixed(1);i.oninput=()=>o.textContent=Number(i.value).toFixed(1);i.onchange=()=>apply(k,+i.value);r.append(n,i,o);$('pro').append(r)}for(let k of ['focusMode','exposureMode','whiteBalanceMode'])if(Array.isArray(c[k])&&c[k].length){let s=document.createElement('select');c[k].forEach(x=>s.add(new Option(x,x)));s.value=track().getSettings()[k]||c[k][0];s.onchange=()=>apply(k,s.value);let r=document.createElement('div');r.className='line';r.append(k,s);$('pro').append(r)}if(!$('pro').children.length)$('pro').textContent='Thiết bị không công khai chỉnh tay qua Web API.'}$('torch').onclick=()=>{let t=track();if(!t?.getCapabilities?.().torch)return status('Không hỗ trợ đèn');apply('torch',!t.getSettings().torch)};
-const sample=document.createElement('canvas'),sc=sample.getContext('2d',{willReadFrequently:true}),display=document.createElement('canvas');display.id='preview';display.style.cssText='position:absolute;inset:0;width:100%;height:100%';$('finder').insertBefore(display,ov);const dc=display.getContext('2d');function dims(){return source===v?[v.videoWidth,v.videoHeight]:source===im?[im.naturalWidth,im.naturalHeight]:[0,0]}function crop(){let [w,h]=dims(),r=ratios[ratio],cw=Math.min(w,h*r)/zoom,ch=cw/r;return [(w-cw)/2,(h-ch)/2,cw,ch]}function frame(c,ctx,w,h,filter='none'){if(!dims()[0])return false;c.width=w;c.height=h;ctx.filter=filter;ctx.drawImage(source,...crop(),0,0,w,h);ctx.filter='none';return true}function preview(){if(source&&dims()[0]){let w=Math.min(1000,$('finder').clientWidth*devicePixelRatio),h=w/ratios[ratio];frame(display,dc,Math.round(w),Math.round(h),$('filter').value)}else dc.clearRect(0,0,display.width,display.height);requestAnimationFrame(preview)}requestAnimationFrame(preview);
-async function detect(){if(!model||!source||!dims()[0]||detecting)return;detecting=true;let token=gen;try{let c=document.createElement('canvas'),cx=c.getContext('2d');frame(c,cx,320,Math.round(320/ratios[ratio]));let res=await model.detect(c,12,.45);if(token===gen)objects=res.map(o=>({name:o.class,score:o.score,b:[o.bbox[0]/c.width,o.bbox[1]/c.height,o.bbox[2]/c.width,o.bbox[3]/c.height]}))}catch(e){$('ai').textContent='AI lỗi / dự phòng'}finally{detecting=false}}setInterval(detect,750);
-const food=new Set(['banana','apple','sandwich','orange','broccoli','carrot','hot dog','pizza','donut','cake','bowl']),product=new Set(['bottle','cup','cell phone','laptop','book','clock','vase','handbag','shoe']);function choose(){let ranked=objects.map(o=>({...o,rank:o.score*Math.sqrt(o.b[2]*o.b[3])*(mode==='Chân dung'&&o.name==='person'?3:mode==='Đồ ăn'&&food.has(o.name)?3:1)})).sort((a,b)=>b.rank-a.rank);if(locked){let match=ranked.filter(o=>o.name===locked.name&&Math.hypot(o.b[0]+o.b[2]/2-locked.x,o.b[1]+o.b[3]/2-locked.y)<.3).sort((a,b)=>Math.hypot(a.b[0]+a.b[2]/2-locked.x,a.b[1]+a.b[3]/2-locked.y)-Math.hypot(b.b[0]+b.b[2]/2-locked.x,b.b[1]+b.b[3]/2-locked.y))[0];if(match){locked.x=match.b[0]+match.b[2]/2;locked.y=match.b[1]+match.b[3]/2;return match}return {name:'Điểm khóa',score:null,b:[locked.x-.07,locked.y-.07,.14,.14]}}return ranked[0]||null}
-$('finder').onclick=e=>{if(!source)return;let r=$('finder').getBoundingClientRect(),x=(e.clientX-r.left)/r.width,y=(e.clientY-r.top)/r.height;let obj=objects.filter(o=>x>=o.b[0]&&x<=o.b[0]+o.b[2]&&y>=o.b[1]&&y<=o.b[1]+o.b[3]).sort((a,b)=>a.b[2]*a.b[3]-b.b[2]*b.b[3])[0];locked={name:obj?.name||'',x:obj?obj.b[0]+obj.b[2]/2:x,y:obj?obj.b[1]+obj.b[3]/2:y};if(track()?.getCapabilities?.().pointsOfInterest)apply('pointsOfInterest',[{x,y}])};
-function analyze(){if(!source||!dims()[0])return;let W=160,H=Math.round(W/ratios[ratio]);frame(sample,sc,W,H);let d=sc.getImageData(0,0,W,H).data,N=W*H,g=new Float32Array(N),hist=new Array(32).fill(0),sum=0,lo=0,hi=0,movement=0;for(let i=0;i<N;i++){let j=i*4,l=.2126*d[j]+.7152*d[j+1]+.0722*d[j+2];g[i]=l;hist[Math.min(31,l>>3)]++;sum+=l;lo+=l<15;hi+=l>245;if(prev?.length===N)movement+=Math.abs(l-prev[i])}let moving=prev?.length===N?movement/N:null;prev=g;let tiles=Array.from({length:48},()=>0),edges=0,lap=0,rows=new Float32Array(H),grad=Array(31).fill(0);for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){let i=y*W+x,gx=g[i+1]-g[i-1],gy=g[i+W]-g[i-W],m=Math.hypot(gx,gy);edges+=m;lap+=Math.abs(4*g[i]-g[i-1]-g[i+1]-g[i-W]-g[i+W]);tiles[Math.floor(y/H*6)*8+Math.floor(x/W*8)]+=m; if(Math.abs(gy)>Math.abs(gx)*2&&m>24){rows[y]+=m;let a=Math.atan2(-gx,gy)*180/Math.PI;while(a>90)a-=180;while(a< -90)a+=180;if(Math.abs(a)<=15)grad[Math.round(a)+15]+=m}}
-let obj=choose(),avg=sum/N,scene=mode;if(mode==='Auto'||mode==='Ảnh'||mode==='Pro'||mode==='Video')scene=obj?.name==='person'?'Chân dung':food.has(obj?.name)?'Đồ ăn':product.has(obj?.name)?'Sản phẩm':avg<65?'Đêm':!obj&&Math.max(...rows)>edges*.035?'Phong cảnh':'Ảnh';let b=obj?.b;let bestTile=tiles.indexOf(Math.max(...tiles)),peak=tiles[bestTile]/Math.max(1,edges),cx=b?b[0]+b[2]/2:(bestTile%8+.5)/8,cy=b?b[1]+b[3]/2:(Math.floor(bestTile/8)+.5)/6;let reliable=!!b||peak>.075;let horizon=rows.indexOf(Math.max(...rows))/H,hasH=scene==='Phong cảnh'&&Math.max(...rows)>edges*.035;let points=scene==='Chân dung'?[[.5,.48],[.34,.48],[.66,.48]]:scene==='Đồ ăn'||scene==='Sản phẩm'||scene==='Macro'?[[.5,.5]]:[[.333,.333],[.667,.333],[.333,.667],[.667,.667],[.5,.5]];let candidates=points.map(([x,y])=>{let dx=x-cx,dy=y-cy,cut=b?Math.max(0,-(b[0]+dx),-(b[1]+dy),b[0]+dx+b[2]-1,b[1]+dy+b[3]-1):0;return {x,y,cost:Math.hypot(dx,dy)+cut*5+(x===.5&&scene==='Ảnh'?.06:0)}}).sort((a,b)=>a.cost-b.cost),t=candidates[0];if(b&&b[3]>.85&&scene==='Chân dung')t={x:.5,y:.5};let dx=t.x-cx,dy=t.y-cy,detail=lap/N,exposure=cl(1-(lo+hi)/N*1.7-Math.max(0,Math.abs(avg-125)-55)/140),composition=reliable?cl(1-Math.hypot(dx,dy)*2):null,stability=source===v&&moving!==null?cl(1-moving/28):null;let vals=[['Phơi sáng',exposure],['Chi tiết cạnh',cl(detail/23)],['Bố cục chủ thể',composition],['Ổn định khung',stability]];let valid=vals.filter(x=>x[1]!==null),score=valid.reduce((a,x)=>a+x[1],0)/valid.length;let issues=[];const add=(p,a,t,w)=>issues.push({p,a,t,w});if(hi/N>.09)add(1.1+hi/N,'☀','Giảm phơi sáng','Vùng cháy sáng '+Math.round(hi/N*100)+'%');if(lo/N>.25&&avg<85)add(1.05,'☼','Tìm nguồn sáng / tăng EV','Vùng tối '+Math.round(lo/N*100)+'%');if(source===v&&moving>12)add(1.2,'◎','Giữ máy ổn định','Khung hình thay đổi nhanh; có thể do chủ thể chuyển động.');if(source===v&&roll!==null&&Math.abs(roll)>4&&Math.abs(roll)<90)add(.8+Math.abs(roll)/45,'↺','Cân bằng điện thoại','Độ nghiêng '+Math.round(roll)+'°');if(b&&scene==='Chân dung'&&b[3]>.94)add(.95,'−','Lùi máy một chút','Khung người gần chạm biên trên hoặc dưới.');if(hasH&&Math.abs(horizon-(horizon<.5?1/3:2/3))>.11)add(.83,horizon<.5?'↑':'↓',horizon<.5?'Nâng hướng máy':'Hạ hướng máy','Thử đưa đường ngang về vị trí 1/3; chỉ là đường cạnh ước lượng.');if(reliable&&Math.hypot(dx,dy)>.09){let horizontal=Math.abs(dx)>Math.abs(dy);add(.7+Math.hypot(dx,dy),horizontal?(dx>0?'←':'→'):(dy>0?'↑':'↓'),horizontal?(dx>0?'Hướng máy sang trái':'Hướng máy sang phải'):(dy>0?'Nâng hướng máy':'Hạ hướng máy'),'Đưa '+(obj?obj.name:'vùng nổi bật')+' về vùng bố cục gợi ý.');}if(!reliable&&!hasH)add(.7,'◎','Chạm chọn chủ thể','Chưa đủ bằng chứng để xác định chủ thể.');if(scene==='Đồ ăn'&&source===v&&pitch!==null&&pitch<20)add(.55,'↘','Thử góc máy 45°','Góc cúi hiện tại '+Math.round(pitch)+'°; phù hợp tùy chiều cao món.');let advice=issues.sort((a,b)=>b.p-a.p)[0]||{a:'✓',t:'Khung hình ổn định',w:'Không phát hiện lỗi nổi bật theo các chỉ số đang đo.'};$('arrow').textContent=advice.a;$('tip').textContent=advice.t;$('why').textContent=advice.w;$('scene').textContent=mode===scene?scene.toUpperCase():mode.toUpperCase()+' / '+scene;$('score').textContent=Math.round(score*100);$('subject').textContent=obj?.name||(reliable?'Vùng nổi bật':'Chưa xác định');$('confidence').textContent=obj?.score?Math.round(obj.score*100)+'% độ tin cậy AI':locked?'Khóa thủ công':'Ước lượng thị giác';$('metrics').innerHTML=vals.map(([n,z])=>`<div class="line"><small>${n}</small><small>${z===null?'—':Math.round(z*100)+'%'}</small></div><div class="bar"><i style="width:${(z??0)*100}%"></i></div>`).join('');$('details').textContent=`Sáng trung bình ${Math.round(avg)}/255 · tối ${Math.round(lo/N*100)}% · cháy ${Math.round(hi/N*100)}% · ${objects.length} vật thể AI. Điểm cạnh không phải độ nét quang học.`;let hc=$('hist').getContext('2d');hc.clearRect(0,0,300,65);hc.fillStyle='#c4f76c';let max=Math.max(...hist);hist.forEach((n,i)=>hc.fillRect(i*300/32,65-n/max*60,300/32-1,n/max*60));last={b,reliable,cx,cy,t,hasH,horizon,scene};draw()}
-function draw(){let W=ov.width=Math.round(ov.clientWidth*devicePixelRatio),H=ov.height=Math.round(ov.clientHeight*devicePixelRatio);if(!last)return;let {b,reliable,cx,cy,t,hasH,horizon}=last;oc.lineWidth=2*devicePixelRatio;function line(x,y,X,Y,col){oc.strokeStyle=col;oc.beginPath();oc.moveTo(x*W,y*H);oc.lineTo(X*W,Y*H);oc.stroke()}if(grid)for(let i=1;i<3;i++){line(i/3,0,i/3,1,'#ffffff44');line(0,i/3,1,i/3,'#ffffff44')}if(hasH)line(0,horizon,1,horizon,'#ffca72');if(b){oc.strokeStyle='#ffffffaa';oc.strokeRect(b[0]*W,b[1]*H,b[2]*W,b[3]*H)}if(reliable){line(cx,cy,t.x,t.y,'#c4f76c');oc.strokeStyle='#c4f76c';oc.beginPath();oc.arc(t.x*W,t.y*H,12*devicePixelRatio,0,Math.PI*2);oc.stroke();oc.fillStyle='#fff';oc.beginPath();oc.arc(cx*W,cy*H,4*devicePixelRatio,0,Math.PI*2);oc.fill()}}setInterval(analyze,300);
-function save(blob,ext){let url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='FRAME_'+Date.now()+'.'+ext;if(blob.type.startsWith('image/')){let i=new Image();i.src=url;a.append(i)}else a.textContent='Tải video';$('gallery').prepend(a);a.click();status('Đã tạo tệp '+ext)}async function shoot(){if(rec?.state==='recording'){rec.stop();return}if(!source)return status('Chưa có camera hoặc ảnh');if(mode==='Video'){if(!stream)return status('Video cần camera');try{let tracks=[...stream.getVideoTracks()];if($('mic').checked){try{recordAudio=await navigator.mediaDevices.getUserMedia({audio:true});tracks.push(...recordAudio.getAudioTracks())}catch(e){status('Mic không khả dụng; quay không âm thanh')}}let chunks=[];rec=new MediaRecorder(new MediaStream(tracks));rec.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};rec.onstop=()=>{recordAudio?.getTracks().forEach(t=>t.stop());recordAudio=null;let type=rec.mimeType||'video/webm';save(new Blob(chunks,{type}),type.includes('mp4')?'mp4':'webm');$('shot').textContent=''};rec.start();$('shot').textContent='■';status('Đang quay luồng gốc'+(recordAudio?' có âm thanh':' không âm thanh'))}catch(e){recordAudio?.getTracks().forEach(t=>t.stop());status(e.message)}return}let c=document.createElement('canvas'),ctx=c.getContext('2d'),[, ,w,h]=crop();frame(c,ctx,Math.round(w),Math.round(h),$('filter').value);$('finder').classList.remove('flash');void $('finder').offsetWidth;$('finder').classList.add('flash');let type=$('format').value;c.toBlob(b=>{if(b)save(b,type==='image/png'?'png':'jpg')},type,.96)}$('shot').onclick=async()=>{if(busy)return;busy=true;let token=gen;try{if(mode!=='Video')for(let i=timer;i>0;i--){status('Chụp sau '+i+'s');await new Promise(r=>setTimeout(r,1000));if(token!==gen)return}await shoot()}finally{busy=false}};
-</script></body></html>
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>FRAME Studio Mobile 4.0</title>
+<style>
+:root{
+  --bg:#090b0f;
+  --panel:#11151b;
+  --panel-2:#171c24;
+  --line:rgba(255,255,255,.08);
+  --text:#eef2f6;
+  --muted:#9da7b3;
+  --accent:#c7ff6a;
+  --accent-2:#86f09a;
+  --danger:#ff6262;
+  --shadow:0 10px 40px rgba(0,0,0,.35);
+  --safe-top:max(env(safe-area-inset-top),12px);
+  --safe-bottom:max(env(safe-area-inset-bottom),12px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  margin:0;
+  background:#000;
+  color:var(--text);
+  font:14px/1.35 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  overscroll-behavior:none;
+}
+button,input,select{font:inherit}
+button{
+  border:0;
+  color:inherit;
+  background:none;
+  cursor:pointer;
+}
+.hidden{display:none !important}
+.app{
+  min-height:100dvh;
+  background:linear-gradient(180deg,#06080b 0%,#0c1016 100%);
+}
+.preview-shell{
+  position:relative;
+  min-height:100dvh;
+  overflow:hidden;
+  background:#06090d;
+}
+video,img,canvas#overlay,canvas#bokehPreview{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+#overlay,#bokehPreview{pointer-events:none}
+.preview-mask{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.10) 18%,rgba(0,0,0,0) 32%,rgba(0,0,0,0) 62%,rgba(0,0,0,.18) 75%,rgba(0,0,0,.72) 100%);
+  pointer-events:none;
+}
+.topbar{
+  position:absolute;
+  top:0;left:0;right:0;
+  padding:var(--safe-top) 14px 10px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  z-index:5;
+}
+.brand{
+  display:flex;gap:10px;align-items:center;
+  background:rgba(7,10,14,.55);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter:blur(14px);
+  padding:10px 12px;
+  border-radius:18px;
+  box-shadow:var(--shadow);
+}
+.brand-mark{
+  width:34px;height:34px;border-radius:12px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent-2) 100%);
+  color:#10140f;font-weight:800;
+}
+.brand-title{font-weight:700;letter-spacing:.2px}
+.brand small,.chip small,.metric small,.drawer-note,.helper{display:block;color:var(--muted)}
+.top-actions{display:flex;gap:10px;align-items:center}
+.icon-btn{
+  width:44px;height:44px;border-radius:16px;
+  background:rgba(12,16,22,.60);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter:blur(14px);
+  display:grid;place-items:center;
+  box-shadow:var(--shadow);
+}
+.icon-btn.primary{width:auto;padding:0 14px;gap:8px;display:flex;font-weight:700}
+.floating-meta{
+  position:absolute;
+  top:86px;left:14px;right:14px;
+  display:flex;gap:8px;flex-wrap:wrap;
+  z-index:4;
+}
+.chip{
+  display:inline-flex;align-items:center;gap:8px;
+  max-width:100%;
+  min-height:34px;
+  background:rgba(7,10,14,.52);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter:blur(14px);
+  padding:8px 12px;
+  border-radius:999px;
+  color:#eef2f6;
+}
+.chip.active{border-color:rgba(199,255,106,.5);color:var(--accent)}
+.chip.warn{color:#ffd98b}
+.chip strong{font-size:12px;white-space:nowrap}
+.empty{
+  position:absolute;inset:0;
+  display:grid;place-items:center;
+  text-align:center;
+  padding:20px;
+  z-index:3;
+}
+.empty-card{
+  width:min(320px,100%);
+  background:rgba(9,12,16,.72);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:24px;
+  padding:20px;
+  backdrop-filter:blur(16px);
+  box-shadow:var(--shadow);
+}
+.empty .big{font-size:50px;line-height:1;margin-bottom:8px}
+.coachcard{
+  position:absolute;
+  left:14px;right:14px;bottom:212px;
+  z-index:4;
+  display:flex;gap:12px;align-items:flex-start;
+  background:rgba(10,13,18,.72);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter:blur(18px);
+  border-radius:20px;
+  padding:14px;
+  box-shadow:var(--shadow);
+}
+.coach-arrow{
+  width:46px;height:46px;border-radius:16px;
+  display:grid;place-items:center;
+  background:rgba(199,255,106,.12);
+  color:var(--accent);
+  font-size:24px;font-weight:800;flex:0 0 auto;
+}
+.coach-body strong{display:block;font-size:16px;margin-bottom:4px}
+.controls{
+  position:absolute;
+  left:0;right:0;bottom:0;
+  z-index:6;
+  padding:0 14px calc(var(--safe-bottom) + 12px);
+}
+.quickbar{
+  display:flex;gap:8px;overflow:auto;
+  padding:0 2px 10px;
+  scrollbar-width:none;
+}
+.quickbar::-webkit-scrollbar,.modes::-webkit-scrollbar,.tabs::-webkit-scrollbar,.gallery-grid::-webkit-scrollbar{display:none}
+.quick-btn{
+  display:flex;align-items:center;gap:8px;
+  min-height:40px;padding:0 14px;
+  border-radius:14px;white-space:nowrap;
+  background:rgba(13,17,23,.65);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter:blur(16px);
+}
+.quick-btn.on{border-color:rgba(199,255,106,.5);color:var(--accent)}
+.modes-wrap{
+  margin-bottom:12px;
+  background:rgba(7,10,14,.62);
+  border:1px solid rgba(255,255,255,.09);
+  backdrop-filter:blur(16px);
+  border-radius:22px;
+  padding:8px;
+}
+.modes{
+  display:flex;gap:6px;overflow:auto;scrollbar-width:none;
+}
+.mode-btn{
+  flex:0 0 auto;
+  padding:11px 14px;
+  border-radius:16px;
+  color:#b7c0cb;
+  font-weight:600;
+  white-space:nowrap;
+}
+.mode-btn.on{
+  color:#10140f;
+  background:linear-gradient(135deg,var(--accent) 0%,var(--accent-2) 100%);
+}
+.shutterbar{
+  display:grid;
+  grid-template-columns:56px 1fr 56px;
+  align-items:center;
+  gap:12px;
+}
+.side-col{display:grid;justify-items:center;gap:10px}
+.side-btn{
+  width:54px;height:54px;border-radius:18px;
+  background:rgba(13,17,23,.68);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter:blur(14px);
+  display:grid;place-items:center;
+  font-size:20px;
+}
+.shutter-center{display:flex;justify-content:center;align-items:center;gap:16px}
+.shot-wrap{
+  width:84px;height:84px;border-radius:999px;
+  border:3px solid rgba(255,255,255,.95);
+  display:grid;place-items:center;
+  background:rgba(255,255,255,.08);
+  box-shadow:0 10px 35px rgba(0,0,0,.35);
+}
+.shot-btn{
+  width:66px;height:66px;border-radius:999px;
+  background:#fff;
+}
+.shot-btn.red{background:var(--danger)}
+.inline-caption{
+  position:absolute;
+  bottom:132px;left:18px;right:18px;
+  text-align:center;
+  color:var(--muted);font-size:12px;
+  z-index:4;
+}
+.drawer{
+  position:fixed;
+  left:0;right:0;bottom:0;
+  z-index:12;
+  background:linear-gradient(180deg,#10141b 0%,#0d1117 100%);
+  border-radius:26px 26px 0 0;
+  border-top:1px solid rgba(255,255,255,.08);
+  box-shadow:0 -20px 50px rgba(0,0,0,.45);
+  transform:translateY(calc(100% - 82px));
+  transition:transform .28s ease;
+  max-height:78dvh;
+}
+.drawer.open{transform:translateY(0)}
+.drawer-handle{width:54px;height:5px;border-radius:99px;background:#4f5967;margin:10px auto 8px}
+.tabs{
+  display:flex;gap:8px;overflow:auto;
+  padding:0 14px 12px;
+  scrollbar-width:none;
+}
+.tab-btn{
+  flex:0 0 auto;
+  min-height:38px;padding:0 14px;border-radius:12px;
+  background:#171c24;border:1px solid rgba(255,255,255,.06);
+  color:#b6bec8;font-weight:600;
+}
+.tab-btn.on{background:#202733;color:#fff;border-color:rgba(199,255,106,.35)}
+.drawer-body{padding:0 14px calc(var(--safe-bottom) + 16px);overflow:auto;max-height:calc(78dvh - 108px)}
+.panel{display:none}
+.panel.on{display:block}
+.section-card{
+  background:#131922;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:18px;
+  padding:14px;
+  margin-bottom:12px;
+}
+.section-card h3{
+  margin:0 0 10px;
+  font-size:15px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.metric{
+  background:#181f29;border:1px solid rgba(255,255,255,.05);
+  border-radius:14px;padding:12px;
+}
+.metric strong{display:block;font-size:22px;line-height:1.1;margin-bottom:4px}
+.reading{display:flex;justify-content:space-between;gap:12px;margin:10px 0 6px}
+.bar{height:7px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent) 0%,var(--accent-2) 100%)}
+.stack{display:grid;gap:10px}
+.slider-row{display:grid;gap:8px}
+.slider-row input[type=range]{width:100%}
+.line{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.select,select,input[type="range"],input[type="checkbox"]{accent-color:var(--accent)}
+select,.ghost-input{
+  width:100%;
+  min-height:42px;
+  border-radius:12px;
+  background:#1a212b;
+  color:var(--text);
+  border:1px solid rgba(255,255,255,.08);
+  padding:0 12px;
+}
+.action-row{display:flex;gap:10px;flex-wrap:wrap}
+.soft-btn,.primary-btn{
+  min-height:42px;padding:0 14px;border-radius:12px;font-weight:700;
+}
+.soft-btn{background:#1a212b;border:1px solid rgba(255,255,255,.08)}
+.primary-btn{background:linear-gradient(135deg,var(--accent) 0%,var(--accent-2) 100%);color:#10140f}
+.gallery-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+}
+.gallery-grid a{
+  aspect-ratio:1/1;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.08);background:#151a22;display:block
+}
+.gallery-grid img,.gallery-grid video{width:100%;height:100%;object-fit:cover;display:block}
+.toast{
+  position:fixed;
+  left:50%;bottom:calc(var(--safe-bottom) + 96px);
+  transform:translate(-50%,20px);
+  min-width:min(80vw,340px);
+  max-width:90vw;
+  background:rgba(14,18,24,.88);
+  border:1px solid rgba(255,255,255,.10);
+  backdrop-filter:blur(16px);
+  color:#f6f8fa;
+  padding:12px 14px;
+  border-radius:16px;
+  opacity:0;pointer-events:none;
+  transition:.22s ease;
+  z-index:20;
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.flash{animation:flash .25s ease}
+@keyframes flash{0%{filter:brightness(1)}35%{filter:brightness(1.8)}100%{filter:brightness(1)}}
+@media (min-width:820px){
+  .preview-shell{max-width:520px;margin:0 auto;box-shadow:0 0 0 1px rgba(255,255,255,.04),0 30px 80px rgba(0,0,0,.45)}
+  body{background:#040608}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="preview-shell" id="finder" style="aspect-ratio:3/4">
+    <video id="v" autoplay playsinline muted class="hidden"></video>
+    <img id="img" class="hidden" alt="Ảnh đã mở">
+    <canvas id="overlay"></canvas>
+    <canvas id="bokehPreview" class="hidden"></canvas>
+    <div class="preview-mask"></div>
+
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-mark">F</div>
+        <div>
+          <div class="brand-title">FRAME Studio</div>
+          <small>Mobile 4.0 · camera-first UI</small>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn primary" id="start"><span>◎</span><span>Bật camera</span></button>
+        <button class="icon-btn" id="drawerToggle" aria-label="Mở bảng điều khiển">☰</button>
+      </div>
+    </div>
+
+    <div class="floating-meta">
+      <div class="chip"><strong id="scene">AUTO</strong></div>
+      <div class="chip"><strong id="level">Góc máy —</strong></div>
+      <div class="chip"><strong id="aiState">AI chưa tải</strong></div>
+    </div>
+
+    <div id="empty" class="empty">
+      <div class="empty-card">
+        <div class="big">◎</div>
+        <h2 style="margin:0 0 8px">Sẵn sàng chụp</h2>
+        <div class="helper" style="margin-bottom:14px">Bật camera hoặc mở một ảnh có sẵn để hệ thống bắt đầu phân tích bố cục, góc chụp và ánh sáng.</div>
+        <div class="action-row" style="justify-content:center">
+          <button class="primary-btn" id="emptyStart">Bật camera</button>
+          <button class="soft-btn" id="emptyUpload">Mở ảnh</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="coachcard">
+      <div class="coach-arrow" id="arrow">◎</div>
+      <div class="coach-body">
+        <strong id="tip">Sẵn sàng phân tích</strong>
+        <div class="helper" id="why">Tối ưu cho điện thoại: preview lớn, nút chụp trung tâm, công cụ phụ nằm trong bảng kéo lên.</div>
+      </div>
+    </div>
+
+    <div class="inline-caption" id="status">Chưa có nguồn hình ảnh.</div>
+
+    <div class="controls">
+      <div class="quickbar">
+        <button class="quick-btn on" id="grid">▦ Lưới</button>
+        <button class="quick-btn" id="ratio">3:4</button>
+        <button class="quick-btn" id="timer">◷ Tắt</button>
+        <button class="quick-btn" id="motion">⊕ Cảm biến</button>
+        <button class="quick-btn" id="torch">✦ Đèn</button>
+        <button class="quick-btn" id="perf">⚡ Cân bằng</button>
+      </div>
+
+      <div class="modes-wrap">
+        <div class="modes" id="modes"></div>
+      </div>
+
+      <div class="shutterbar">
+        <div class="side-col">
+          <button class="side-btn" id="upload" aria-label="Mở ảnh">▧</button>
+          <small class="helper">Ảnh</small>
+        </div>
+        <div class="shutter-center">
+          <button class="icon-btn" id="stop" title="Tắt">■</button>
+          <div class="shot-wrap"><button class="shot-btn" id="shot" aria-label="Chụp ảnh hoặc quay video"></button></div>
+          <button class="icon-btn" id="flip" title="Đổi camera">⇄</button>
+        </div>
+        <div class="side-col">
+          <button class="side-btn" id="toggleGallery" aria-label="Mở thư viện">▤</button>
+          <small class="helper">Thư viện</small>
+        </div>
+      </div>
+    </div>
+
+    <input id="file" type="file" accept="image/*" hidden>
+  </div>
+</div>
+
+<div class="drawer" id="drawer">
+  <div class="drawer-handle"></div>
+  <div class="tabs">
+    <button class="tab-btn on" data-panel="analysis">Phân tích</button>
+    <button class="tab-btn" data-panel="portrait">Chân dung</button>
+    <button class="tab-btn" data-panel="desk">Desk</button>
+    <button class="tab-btn" data-panel="pro">Pro</button>
+    <button class="tab-btn" data-panel="gallery">Thư viện</button>
+  </div>
+  <div class="drawer-body">
+    <section class="panel on" id="panel-analysis">
+      <div class="section-card">
+        <h3><span>Tóm tắt khung hình</span><small id="summaryStamp">Live</small></h3>
+        <div class="metrics-grid">
+          <div class="metric"><strong id="score">—</strong><small>Điểm kỹ thuật tham khảo</small></div>
+          <div class="metric"><strong id="subject">—</strong><small id="confidence">Chưa có chủ thể</small></div>
+        </div>
+      </div>
+      <div class="section-card">
+        <h3><span>Chỉ số trực tiếp</span><small id="aiBadge">AI chưa tải</small></h3>
+        <div id="metrics" class="stack"></div>
+      </div>
+      <div class="section-card">
+        <h3>Nhận xét</h3>
+        <div class="drawer-note" id="details">Chưa có dữ liệu ảnh.</div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-portrait">
+      <div class="section-card">
+        <h3><span>Khẩu độ mô phỏng</span><strong id="fval">ƒ/2.8</strong></h3>
+        <div class="slider-row">
+          <input id="aperture" type="range" min="0" max="8" step="1" value="3">
+          <div class="line helper"><span>ƒ/1.4 · xóa phông mạnh</span><span>ƒ/16 · hậu cảnh rõ hơn</span></div>
+        </div>
+      </div>
+      <div class="section-card">
+        <h3>Xem thử</h3>
+        <div class="action-row">
+          <button class="primary-btn" id="previewBokeh">Xem thử xóa phông</button>
+          <button class="soft-btn hidden" id="originalBokeh">Về camera</button>
+        </div>
+        <div class="drawer-note" id="bokehStatus" style="margin-top:10px">Hiệu ứng hoạt động trên ảnh xem thử hoặc ảnh chụp, không thay đổi khẩu độ vật lý của ống kính.</div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-desk">
+      <div class="section-card">
+        <h3>Kiểu bố cục desk</h3>
+        <select id="deskStyle">
+          <option value="sym">Chính diện cân đối</option>
+          <option value="angle">Góc chéo tạo chiều sâu</option>
+          <option value="top">Từ trên xuống (flat lay)</option>
+        </select>
+      </div>
+      <div class="section-card">
+        <h3>Đánh giá setup</h3>
+        <div id="deskRead" class="drawer-note">Chờ dữ liệu khung hình để đo độ cân đối, độ nghiêng và vùng cháy sáng màn hình.</div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-pro">
+      <div class="section-card">
+        <h3>Bộ lọc & lưu ảnh</h3>
+        <div class="stack">
+          <div>
+            <div class="helper" style="margin-bottom:6px">Bộ lọc hiển thị</div>
+            <select id="filter">
+              <option value="none">Gốc</option>
+              <option value="contrast(1.06) saturate(1.08)">Vivid nhẹ</option>
+              <option value="grayscale(1)">Đen trắng</option>
+              <option value="sepia(.45) saturate(1.08)">Film ấm</option>
+              <option value="brightness(1.08) contrast(1.02)">Sáng hơn</option>
+            </select>
+          </div>
+          <div>
+            <div class="helper" style="margin-bottom:6px">Định dạng ảnh</div>
+            <select id="format">
+              <option value="image/jpeg">JPEG</option>
+              <option value="image/png">PNG</option>
+            </select>
+          </div>
+          <label class="line"><span>Thu âm khi quay video</span><input id="mic" type="checkbox"></label>
+        </div>
+      </div>
+      <div class="section-card">
+        <h3>Điều khiển phần cứng</h3>
+        <div id="pro" class="stack"><div class="drawer-note">Bật camera để tải các điều khiển phần cứng nếu thiết bị cho phép qua Web API.</div></div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-gallery">
+      <div class="section-card">
+        <h3>Thư viện tạo nhanh</h3>
+        <div class="drawer-note" style="margin-bottom:10px">Ảnh chụp và video quay từ trang web sẽ xuất hiện ở đây để tải lại nhanh.</div>
+        <div class="gallery-grid" id="gallery"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const v = $('v'), im = $('img'), ov = $('overlay'), bp = $('bokehPreview');
+const oc = ov.getContext('2d');
+const bc = bp.getContext('2d');
+const cl = (x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const modes = ['Auto','Ảnh','Chân dung','Phong cảnh','Đồ ăn','Sản phẩm','Desk / Gaming','Macro','Đêm','Pro','Video'];
+const ratios = [{label:'3:4',value:3/4},{label:'9:16',value:9/16},{label:'1:1',value:1},{label:'4:3',value:4/3},{label:'16:9',value:16/9}];
+const profiles = [
+  {name:'Tiết kiệm',interval:1000,ai:0,size:96},
+  {name:'Cân bằng',interval:560,ai:2400,size:128},
+  {name:'Chi tiết',interval:420,ai:1400,size:160}
+];
+const apertures = [1.4,1.8,2,2.8,4,5.6,8,11,16];
+const foodSet = new Set(['banana','apple','sandwich','orange','broccoli','carrot','hot dog','pizza','donut','cake','bowl']);
+const productSet = new Set(['bottle','cup','cell phone','laptop','book','clock','vase','handbag','shoe']);
+const deskSet = new Set(['tv','laptop','keyboard','mouse','cell phone']);
+
+let stream = null;
+let source = null;
+let facing = 'environment';
+let mode = 'Auto';
+let ratioIndex = 0;
+let gridOn = true;
+let timerValue = 0;
+let profileIndex = 1;
+let roll = null, pitch = null;
+let objects = [];
+let model = null;
+let aiAttempted = false;
+let loadingAI = false;
+let detecting = false;
+let rec = null;
+let recordAudio = null;
+let dirty = true;
+let nextAnalysis = 0;
+let nextAI = 0;
+let pauseUntil = 0;
+let gen = 0;
+let last = null;
+let busy = false;
+let locked = null;
+let toastTimer = null;
+let segmenterPromise = null;
+let bokehShown = false;
+
+function toast(msg){
+  const el = $('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>el.classList.remove('show'), 2600);
+}
+function status(msg){ $('status').textContent = msg; }
+function setDrawer(open){ $('drawer').classList.toggle('open',open); }
+function showPanel(name){
+  document.querySelectorAll('.tab-btn').forEach(btn=>btn.classList.toggle('on', btn.dataset.panel===name));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on', p.id==='panel-'+name));
+}
+function syncModeDependentPanels(){
+  if(mode==='Chân dung') showPanel('portrait');
+  else if(mode==='Desk / Gaming') showPanel('desk');
+}
+function registerModes(){
+  const host = $('modes');
+  host.innerHTML='';
+  modes.forEach(m=>{
+    const b = document.createElement('button');
+    b.className = 'mode-btn' + (m===mode?' on':'');
+    b.textContent = m;
+    b.onclick = ()=>setMode(m,b);
+    host.appendChild(b);
+  });
+}
+function setMode(m, btn){
+  if(rec?.state==='recording' || busy) return;
+  mode = m;
+  clearBokeh();
+  document.querySelectorAll('.mode-btn').forEach(x=>x.classList.toggle('on', x===btn || x.textContent===m));
+  $('shot').classList.toggle('red', mode==='Video');
+  $('tip').textContent = 'Đang đánh giá khung hình';
+  $('why').textContent = 'Công cụ và gợi ý đã được tối giản để ưu tiên thao tác trên điện thoại.';
+  gen++; last = null; dirty = true; nextAI = 0; pauseUntil = performance.now() + 280;
+  oc.clearRect(0,0,ov.width,ov.height);
+  syncModeDependentPanels();
+}
+registerModes();
+
+function script(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=no;document.head.appendChild(s);});}
+async function loadAI(){
+  try{
+    $('aiState').textContent = 'Đang tải AI';
+    $('aiBadge').textContent = 'Đang tải AI';
+    await script('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js');
+    await script('https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js');
+    model = await cocoSsd.load({base:'lite_mobilenet_v2'});
+    $('aiState').textContent = 'AI sẵn sàng';
+    $('aiBadge').textContent = 'AI sẵn sàng';
+  }catch(e){
+    $('aiState').textContent = 'AI offline / cơ bản';
+    $('aiBadge').textContent = 'AI offline / cơ bản';
+  }
+}
+function currentProfile(){ return profiles[profileIndex]; }
+function dims(){
+  if(source===v) return [v.videoWidth||0, v.videoHeight||0];
+  if(source===im) return [im.naturalWidth||0, im.naturalHeight||0];
+  return [0,0];
+}
+function crop(){
+  const [w,h] = dims();
+  const fw = $('finder').clientWidth;
+  const fh = $('finder').clientHeight;
+  const r = fw/Math.max(1,fh);
+  const cw = Math.min(w, h*r);
+  const ch = Math.min(h, cw/r);
+  return [(w-cw)/2,(h-ch)/2,cw,ch];
+}
+function syncPreview(){
+  const filter = $('filter').value;
+  v.style.filter = filter;
+  im.style.filter = filter;
+}
+function frame(canvas, ctx, w, h, filter='none'){
+  const [dw,dh] = dims();
+  if(!dw || !dh || !source) return false;
+  if(canvas.width!==w) canvas.width = w;
+  if(canvas.height!==h) canvas.height = h;
+  ctx.filter = filter;
+  ctx.drawImage(source, ...crop(), 0, 0, w, h);
+  ctx.filter = 'none';
+  return true;
+}
+function resetAnalysis(){ objects=[]; last=null; dirty=true; nextAI=0; gen++; drawOverlay(); }
+function stop(){
+  clearBokeh();
+  if(rec?.state==='recording') rec.stop();
+  stream?.getTracks().forEach(t=>t.stop());
+  recordAudio?.getTracks().forEach(t=>t.stop());
+  recordAudio=null;
+  stream=null;
+  v.srcObject=null;
+  v.classList.add('hidden');
+  im.classList.add('hidden');
+  $('empty').classList.remove('hidden');
+  $('start').innerHTML = '<span>◎</span><span>Bật camera</span>';
+  status('Chưa có nguồn hình ảnh.');
+  source = null;
+  $('score').textContent='—';
+  $('subject').textContent='—';
+  $('confidence').textContent='Chưa có chủ thể';
+  $('metrics').innerHTML='';
+  $('details').textContent='Chưa có dữ liệu ảnh.';
+  $('deskRead').textContent='Chờ dữ liệu khung hình để đo độ cân đối, độ nghiêng và vùng cháy sáng màn hình.';
+  $('tip').textContent='Sẵn sàng phân tích';
+  $('why').textContent='Bật camera hoặc mở một ảnh có sẵn.';
+  $('scene').textContent = 'AUTO';
+  oc.clearRect(0,0,ov.width,ov.height);
+  resetAnalysis();
+}
+async function start(){
+  stop();
+  try{
+    stream = await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:facing}, width:{ideal:1920}, height:{ideal:1080}},
+      audio:false
+    });
+    v.srcObject = stream;
+    await v.play();
+    source = v;
+    v.classList.remove('hidden');
+    $('empty').classList.add('hidden');
+    $('start').innerHTML = '<span>●</span><span>Camera đang bật</span>';
+    syncPreview();
+    buildProControls();
+    status('Camera sẵn sàng.');
+    dirty = true;
+    toast('Camera đã sẵn sàng');
+  }catch(e){
+    const msg = 'Không mở được camera. Cần HTTPS/localhost và quyền camera.';
+    status(msg);
+    toast(msg);
+  }
+}
+$('start').onclick = ()=>stream ? stop() : start();
+$('emptyStart').onclick = start;
+$('stop').onclick = stop;
+$('flip').onclick = ()=>{ facing = facing==='environment'?'user':'environment'; if(stream) start(); else toast('Đã đổi camera, bật lại để dùng.'); };
+$('upload').onclick = ()=>$('file').click();
+$('emptyUpload').onclick = ()=>$('file').click();
+$('file').onchange = e => {
+  const f = e.target.files[0];
+  if(!f) return;
+  stop();
+  const url = URL.createObjectURL(f);
+  im.onload = ()=>{
+    source = im;
+    im.classList.remove('hidden');
+    $('empty').classList.add('hidden');
+    syncPreview();
+    dirty = true;
+    status('Đã mở ảnh để phân tích.');
+    URL.revokeObjectURL(url);
+  };
+  im.src = url;
+};
+$('drawerToggle').onclick = ()=>setDrawer(!$('drawer').classList.contains('open'));
+$('toggleGallery').onclick = ()=>{ setDrawer(true); showPanel('gallery'); };
+document.querySelectorAll('.tab-btn').forEach(btn=>btn.onclick = ()=>{ setDrawer(true); showPanel(btn.dataset.panel); });
+$('grid').onclick = ()=>{ gridOn = !gridOn; $('grid').classList.toggle('on', gridOn); drawOverlay(); dirty = true; };
+$('ratio').onclick = ()=>{
+  ratioIndex = (ratioIndex+1)%ratios.length;
+  $('ratio').textContent = ratios[ratioIndex].label;
+  $('finder').style.aspectRatio = ratios[ratioIndex].value;
+  dirty = true;
+  setTimeout(drawOverlay,40);
+};
+$('timer').onclick = ()=>{
+  timerValue = ({0:3,3:5,5:10,10:0})[timerValue];
+  $('timer').textContent = '◷ ' + (timerValue ? (timerValue+'s') : 'Tắt');
+};
+$('perf').onclick = ()=>{
+  profileIndex = (profileIndex+1)%profiles.length;
+  $('perf').textContent = '⚡ ' + currentProfile().name;
+  nextAI=0; dirty=true;
+  if(!currentProfile().ai){ $('aiState').textContent='AI tạm tắt'; $('aiBadge').textContent='AI tạm tắt'; }
+  else if(model){ $('aiState').textContent='AI sẵn sàng'; $('aiBadge').textContent='AI sẵn sàng'; }
+};
+$('motion').onclick = async ()=>{
+  try{
+    if(!window.DeviceOrientationEvent) throw Error('Thiết bị không có cảm biến này');
+    if(DeviceOrientationEvent.requestPermission && await DeviceOrientationEvent.requestPermission() !== 'granted') throw Error('Quyền cảm biến bị từ chối');
+    window.addEventListener('deviceorientation', onOrientation);
+    $('motion').classList.add('on');
+    toast('Đã bật cảm biến định hướng');
+  }catch(e){ toast(e.message); }
+};
+$('torch').onclick = ()=>{
+  const t = stream?.getVideoTracks?.()[0];
+  if(!t?.getCapabilities?.().torch) return toast('Thiết bị / trình duyệt không hỗ trợ đèn');
+  const current = !!t.getSettings().torch;
+  t.applyConstraints({advanced:[{torch:!current}]})
+    .then(()=>toast(!current?'Đã bật đèn':'Đã tắt đèn'))
+    .catch(()=>toast('Không điều khiển được đèn'));
+};
+$('filter').onchange = ()=>{ syncPreview(); dirty = true; };
+$('aperture').oninput = ()=>{
+  $('fval').textContent = 'ƒ/' + apertures[+$('aperture').value];
+  if(bokehShown) clearBokeh();
+};
+$('deskStyle').onchange = ()=>{ dirty = true; };
+
+function onOrientation(e){
+  if(e.beta==null || e.gamma==null) return;
+  const b = e.beta*Math.PI/180, g=e.gamma*Math.PI/180;
+  const a = (screen.orientation?.angle ?? window.orientation ?? 0) * Math.PI/180;
+  const x = -Math.cos(b)*Math.sin(g), y=Math.sin(b), z=Math.cos(b)*Math.cos(g);
+  pitch = Math.asin(cl(z,-1,1))*180/Math.PI;
+  roll = Math.atan2(x*Math.cos(a)+y*Math.sin(a), y*Math.cos(a)-x*Math.sin(a))*180/Math.PI;
+  if(Math.abs(pitch)>75) roll = null;
+  $('level').textContent = 'Cúi ' + Math.round(pitch) + '°' + (roll==null ? '' : (' · nghiêng ' + Math.round(roll) + '°'));
+}
+function buildProControls(){
+  const host = $('pro');
+  host.innerHTML='';
+  const t = stream?.getVideoTracks?.()[0];
+  const caps = t?.getCapabilities?.() || {};
+  const settings = t?.getSettings?.() || {};
+  const map = {iso:'ISO',exposureTime:'Tốc độ',exposureCompensation:'EV',focusDistance:'Focus',colorTemperature:'WB (K)',zoom:'Zoom HW'};
+  Object.entries(map).forEach(([key,label])=>{
+    const c = caps[key];
+    if(!c || c.max<=c.min) return;
+    const box = document.createElement('div'); box.className='slider-row';
+    const top = document.createElement('div'); top.className='line';
+    const span1 = document.createElement('span'); span1.textContent = label;
+    const span2 = document.createElement('span'); span2.textContent = Number(settings[key] ?? c.min).toFixed(1);
+    const input = document.createElement('input');
+    input.type='range'; input.min=c.min; input.max=c.max; input.step=c.step || ((c.max-c.min)/100); input.value=settings[key] ?? c.min;
+    input.oninput = ()=> span2.textContent = Number(input.value).toFixed(1);
+    input.onchange = ()=> t.applyConstraints({advanced:[{[key]:+input.value}]}).catch(()=>toast('Không áp dụng được '+label));
+    top.append(span1,span2);
+    box.append(top,input);
+    host.append(box);
+  });
+  ['focusMode','exposureMode','whiteBalanceMode'].forEach(key=>{
+    const c = caps[key];
+    if(!Array.isArray(c) || !c.length) return;
+    const box = document.createElement('div'); box.className='stack';
+    const label = document.createElement('div'); label.className='helper'; label.textContent = key;
+    const select = document.createElement('select');
+    c.forEach(x=>select.add(new Option(x,x)));
+    select.value = settings[key] || c[0];
+    select.onchange = ()=> t.applyConstraints({advanced:[{[key]:select.value}]}).catch(()=>toast('Không áp dụng được '+key));
+    box.append(label,select); host.append(box);
+  });
+  if(!host.children.length) host.innerHTML = '<div class="drawer-note">Thiết bị hoặc trình duyệt chưa công khai điều khiển phần cứng qua Web API.</div>';
+}
+
+const sample = document.createElement('canvas');
+const sc = sample.getContext('2d', {willReadFrequently:true});
+const inf = document.createElement('canvas');
+const ifc = inf.getContext('2d');
+
+function chooseSubject(scene){
+  let ranked = objects.map(o=>{
+    const area = o.b[2] * o.b[3];
+    let boost = 1;
+    if((scene==='Chân dung' || mode==='Chân dung') && o.name==='person') boost = 3.4;
+    else if((scene==='Đồ ăn' || mode==='Đồ ăn') && foodSet.has(o.name)) boost = 3.1;
+    else if((scene==='Desk / Gaming' || mode==='Desk / Gaming') && deskSet.has(o.name)) boost = 3.2;
+    else if((scene==='Sản phẩm' || mode==='Sản phẩm') && productSet.has(o.name)) boost = 2.3;
+    return {...o, rank:o.score*Math.sqrt(area)*boost};
+  }).sort((a,b)=>b.rank-a.rank);
+  return ranked[0] || null;
+}
+function detectScene(avg, horizon, deskScore){
+  if(mode!=='Auto') return mode;
+  if(deskScore.count>=2) return 'Desk / Gaming';
+  const person = objects.find(o=>o.name==='person' && o.score>.55);
+  const food = objects.find(o=>foodSet.has(o.name) && o.score>.45);
+  const product = objects.find(o=>productSet.has(o.name) && o.score>.45);
+  if(person) return 'Chân dung';
+  if(food) return 'Đồ ăn';
+  if(product) return 'Sản phẩm';
+  if(avg < 72) return 'Đêm';
+  if(horizon != null) return 'Phong cảnh';
+  return 'Ảnh';
+}
+function deskMeasure(gray, W, H){
+  const devices = objects.filter(o=>deskSet.has(o.name) && o.score>=.45);
+  let box = null;
+  if(devices.length){
+    const x = Math.min(...devices.map(o=>o.b[0]));
+    const y = Math.min(...devices.map(o=>o.b[1]));
+    const r = Math.max(...devices.map(o=>o.b[0]+o.b[2]));
+    const b = Math.max(...devices.map(o=>o.b[1]+o.b[3]));
+    box = [x,y,r-x,b-y];
+  }
+  let bins = new Float64Array(41), clip=0, n=0;
+  const screen = devices.filter(o=>o.name==='tv'||o.name==='laptop').sort((a,b)=>b.b[2]*b.b[3]-a.b[2]*a.b[3])[0];
+  const roi = screen?.b || box || [0,0,1,1];
+  for(let y=1;y<H-1;y++){
+    for(let x=1;x<W-1;x++){
+      const u=x/W,v=y/H;
+      if(u<roi[0]||u>roi[0]+roi[2]||v<roi[1]||v>roi[1]+roi[3]) continue;
+      const i=y*W+x;
+      if(screen && u>roi[0]+roi[2]*.12 && u<roi[0]+roi[2]*.88 && v>roi[1]+roi[3]*.08 && v<roi[1]+roi[3]*(screen.name==='laptop'?.50:.9)){
+        n++; if(gray[i]>245) clip++;
+      }
+      const gx=gray[i+1]-gray[i-1], gy=gray[i+W]-gray[i-W];
+      if(Math.abs(gy)<30) continue;
+      let a = Math.atan2(-gx, gy)*180/Math.PI;
+      if(a>90) a-=180; if(a<-90) a+=180;
+      if(Math.abs(a)<=20) bins[Math.round(a)+20] += Math.hypot(gx,gy);
+    }
+  }
+  const total = bins.reduce((s,v)=>s+v,0);
+  const idx = bins.indexOf(Math.max(...bins));
+  let local=0, weighted=0;
+  for(let j=Math.max(0,idx-2); j<=Math.min(40,idx+2); j++){
+    local += bins[j]; weighted += (j-20)*bins[j];
+  }
+  const skew = total>1300 && local/total>.35 ? weighted/local : null;
+  const balance = box ? cl(1 - Math.abs((box[0]+box[2]/2)-.5)*2) : null;
+  const screenClip = n>20 ? clip/n : null;
+  return {count:devices.length, box, skew, balance, screenClip, clipped:box&&(box[0]<.025||box[1]<.025||box[0]+box[2]>.975||box[1]+box[3]>.975)};
+}
+async function detectObjects(){
+  if(!model || !source || !dims()[0] || detecting) return;
+  detecting = true;
+  try{
+    const size = currentProfile().size >= 160 ? 320 : 224;
+    const r = $('finder').clientWidth / Math.max(1,$('finder').clientHeight);
+    frame(inf, ifc, r>=1?size:Math.round(size*r), r>=1?Math.round(size/r):size);
+    const res = await model.detect(inf, 12, .45);
+    objects = res.map(o=>({name:o.class, score:o.score, b:[o.bbox[0]/inf.width, o.bbox[1]/inf.height, o.bbox[2]/inf.width, o.bbox[3]/inf.height]}));
+  }catch(e){
+    $('aiState').textContent = 'AI lỗi / cơ bản';
+    $('aiBadge').textContent = 'AI lỗi / cơ bản';
+  }finally{ detecting = false; }
+}
+function analyze(){
+  const p = currentProfile();
+  if(!frame(sample, sc, p.size, p.size, 'none')) return;
+  const img = sc.getImageData(0,0,sample.width,sample.height);
+  const data = img.data;
+  const W = sample.width, H = sample.height;
+  const gray = new Uint8ClampedArray(W*H);
+  let avg=0, lo=0, hi=0;
+  const hist = new Array(32).fill(0);
+  let edgeSum=0;
+  const horizonBins = new Float64Array(61);
+  for(let y=1;y<H-1;y++){
+    for(let x=1;x<W-1;x++){
+      const i = (y*W+x)*4;
+      const g = (.2126*data[i] + .7152*data[i+1] + .0722*data[i+2])|0;
+      const gi = y*W+x;
+      gray[gi] = g;
+      avg += g;
+      if(g<40) lo++; if(g>235) hi++;
+      hist[Math.min(31, g>>3)]++;
+    }
+  }
+  const N = W*H;
+  avg /= N;
+  let horMag=0, horPos=0, bestMag=0;
+  for(let y=2;y<H-2;y++){
+    for(let x=2;x<W-2;x++){
+      const i = y*W+x;
+      const gx = gray[i+1]-gray[i-1];
+      const gy = gray[i+W]-gray[i-W];
+      const mag = Math.hypot(gx,gy);
+      edgeSum += mag;
+      if(mag>42){
+        let ang = Math.atan2(gy,gx)*180/Math.PI;
+        if(ang<0) ang+=180;
+        if(ang>90) ang-=180;
+        if(Math.abs(Math.abs(ang)-90) <= 15){
+          horMag += mag;
+          horPos += y * mag;
+        }
+      }
+    }
+  }
+  const horizon = horMag > 1000 ? horPos/(horMag*H) : null;
+  const desk = deskMeasure(gray,W,H);
+  const scene = detectScene(avg,horizon,desk);
+  const subj = chooseSubject(scene);
+  let b=null, cx=.5, cy=.5, tx=.5, ty=.5, reliable=false;
+  if(subj){
+    b = subj.b;
+    cx = b[0]+b[2]/2; cy = b[1]+b[3]/2;
+    reliable = true;
+    if(scene==='Chân dung' || scene==='Sản phẩm' || scene==='Đồ ăn'){
+      tx = cx<.5 ? 2/3 : 1/3;
+      ty = scene==='Đồ ăn' ? .60 : .40;
+    }else if(scene==='Desk / Gaming'){
+      if($('deskStyle').value==='sym'){tx=.5;ty=.48;}
+      else if($('deskStyle').value==='angle'){tx=.44;ty=.52;}
+      else {tx=.5;ty=.50;}
+    }else if(scene==='Phong cảnh'){
+      tx=.5; ty = horizon!=null && horizon<.5 ? .65 : .35;
+    }
+  }
+  const dx = cx-tx, dy = cy-ty;
+  const shadowScore = cl(1-lo/N*1.8);
+  const highlightScore = cl(1-hi/N*2);
+  const edgeScore = cl((edgeSum/N)/18);
+  const centerScore = reliable ? cl(1-Math.hypot(dx,dy)*1.7) : .55;
+  const horizonScore = horizon==null ? .55 : cl(1-Math.abs((horizon<.5?1/3:2/3)-horizon)*3.2);
+  const deskScore = scene==='Desk / Gaming' ? [desk.balance??.55, desk.screenClip==null?.55:cl(1-desk.screenClip*2.3), desk.clipped?.2:.9, desk.skew==null?.55:cl(1-Math.abs(desk.skew)/11)].reduce((a,b)=>a+b,0)/4 : null;
+
+  const components = [shadowScore, highlightScore, edgeScore, centerScore];
+  if(scene==='Phong cảnh') components.push(horizonScore);
+  if(scene==='Desk / Gaming' && deskScore!=null) components.push(deskScore);
+  let score = components.reduce((a,b)=>a+b,0)/components.length;
+  if(scene==='Đêm') score = (score*.72 + cl(avg/80)*.28);
+  score = cl(score);
+
+  const issues = [];
+  function add(p,arrow,title,why){ issues.push({p,arrow,title,why}); }
+  if(roll!=null && Math.abs(roll)>3.5) add(.98,'↺','Giữ điện thoại cân hơn','Khung đang nghiêng khoảng '+Math.round(roll)+'° so với mặt phẳng ngang.');
+  if(scene==='Desk / Gaming' && desk.skew!=null && Math.abs(desk.skew)>3) add(.95,desk.skew>0?'↺':'↻','Căn thẳng mép màn hình / bàn','Đường ngang trong setup đang hơi nghiêng.');
+  if(scene==='Desk / Gaming' && desk.clipped) add(.94,'−','Lùi máy một chút','Một phần thiết bị đang chạm sát mép ảnh.');
+  if(scene==='Desk / Gaming' && desk.screenClip!=null && desk.screenClip>.18) add(.88,'☼','Giảm cháy sáng màn hình','Vùng hiển thị của màn hình đang quá sáng, dễ mất chi tiết.');
+  if(scene==='Phong cảnh' && horizon!=null && Math.abs((horizon<.5?1/3:2/3)-horizon)>.10) add(.86,horizon<.5?'↑':'↓',horizon<.5?'Nâng góc máy':'Hạ góc máy','Đường ngang đang lệch khỏi vùng bố cục 1/3.');
+  if(reliable && Math.hypot(dx,dy)>.085) add(.82,Math.abs(dx)>Math.abs(dy)?(dx>0?'←':'→'):(dy>0?'↑':'↓'),Math.abs(dx)>Math.abs(dy)?(dx>0?'Dịch máy sang trái':'Dịch máy sang phải'):(dy>0?'Nâng máy lên':'Hạ máy xuống'),'Đưa chủ thể về vùng bố cục gợi ý để ảnh cân hơn.');
+  if(avg<54 && scene!=='Đêm') add(.70,'☀','Tăng sáng hoặc tìm nguồn sáng phụ','Khung đang khá tối.');
+  if(hi/N>.14 && scene!=='Desk / Gaming') add(.74,'☼','Giảm vùng cháy sáng','Một số vùng sáng đang mất chi tiết.');
+  if(scene==='Đồ ăn' && pitch!=null && pitch<20) add(.60,'↘','Thử góc 45°','Góc cúi hiện tại phù hợp chuyển dần sang góc 45° để món ăn có chiều sâu hơn.');
+  if(scene==='Chân dung' && b && b[3]>.92) add(.72,'−','Lùi nhẹ để thoáng khung','Chủ thể đang khá sát khung, dễ bí bố cục.');
+  if(!issues.length) add(.50,'✓','Khung hình ổn định','Chưa phát hiện lỗi nổi bật theo các chỉ số đang đo.');
+  issues.sort((a,b)=>b.p-a.p);
+  const best = issues[0];
+
+  const metricRows = [
+    ['Ánh sáng', cl(avg/170)],
+    ['Chi tiết cạnh', edgeScore],
+    ['Chống cháy sáng', highlightScore],
+    ['Giữ vùng tối', shadowScore],
+    ['Bố cục chủ thể', centerScore],
+  ];
+  if(scene==='Phong cảnh') metricRows.push(['Đường chân trời', horizonScore]);
+  if(scene==='Desk / Gaming' && deskScore!=null) metricRows.push(['Setup desk', deskScore]);
+  $('metrics').innerHTML = metricRows.map(([name,val])=>`<div><div class="reading"><span>${name}</span><strong>${Math.round((val??0)*100)}%</strong></div><div class="bar"><i style="width:${Math.round((val??0)*100)}%"></i></div></div>`).join('');
+  $('score').textContent = Math.round(score*100) + '/100';
+  $('subject').textContent = scene==='Desk / Gaming' && desk.count ? (desk.count + ' thiết bị') : (subj?.name || (reliable?'Chủ thể':'Chưa xác định'));
+  $('confidence').textContent = subj?.score ? (Math.round(subj.score*100) + '% độ tin cậy AI') : 'Phân tích thị giác';
+  $('tip').textContent = best.title;
+  $('why').textContent = best.why;
+  $('arrow').textContent = best.arrow;
+  $('scene').textContent = (mode===scene ? scene : (mode + ' / ' + scene)).toUpperCase();
+  $('details').textContent = `Độ sáng trung bình ${Math.round(avg)}/255 · vùng tối ${Math.round(lo/N*100)}% · vùng cháy ${Math.round(hi/N*100)}% · phát hiện ${objects.length} vật thể AI. Điểm số là tham khảo để hướng dẫn thao tác, không thay cho chất lượng nhiếp ảnh cuối cùng.`;
+  $('summaryStamp').textContent = source===im ? 'Ảnh tĩnh' : 'Live';
+  if(scene==='Desk / Gaming'){
+    const deskAdvice = [];
+    if(desk.balance!=null) deskAdvice.push('Cân đối: '+Math.round(desk.balance*100)+'%');
+    if(desk.skew!=null) deskAdvice.push('Nghiêng setup: '+Math.round(desk.skew)+'°');
+    if(desk.screenClip!=null) deskAdvice.push('Cháy sáng màn hình: '+Math.round(desk.screenClip*100)+'%');
+    if(desk.clipped) deskAdvice.push('Có thiết bị chạm mép ảnh');
+    $('deskRead').textContent = deskAdvice.length ? deskAdvice.join(' · ') : 'Chưa nhận diện đủ thiết bị để đánh giá setup.';
+  }
+  last = {scene, b, cx, cy, tx, ty, reliable, horizon};
+  drawOverlay();
+}
+function drawOverlay(){
+  const dpr = Math.min(devicePixelRatio || 1, 1.5);
+  const W = Math.round(ov.clientWidth*dpr);
+  const H = Math.round(ov.clientHeight*dpr);
+  if(ov.width!==W) ov.width = W;
+  if(ov.height!==H) ov.height = H;
+  oc.clearRect(0,0,W,H);
+  oc.lineWidth = 2*dpr;
+  function line(x1,y1,x2,y2,color){ oc.strokeStyle=color; oc.beginPath(); oc.moveTo(x1*W,y1*H); oc.lineTo(x2*W,y2*H); oc.stroke(); }
+  if(gridOn){
+    for(let i=1;i<3;i++){
+      line(i/3,0,i/3,1,'rgba(255,255,255,.28)');
+      line(0,i/3,1,i/3,'rgba(255,255,255,.28)');
+    }
+  }
+  if(!last) return;
+  if(last.horizon!=null) line(0,last.horizon,1,last.horizon,'rgba(255,211,107,.85)');
+  if(last.b){
+    oc.strokeStyle = 'rgba(255,255,255,.76)';
+    oc.strokeRect(last.b[0]*W, last.b[1]*H, last.b[2]*W, last.b[3]*H);
+  }
+  if(last.reliable){
+    line(last.cx,last.cy,last.tx,last.ty,'rgba(199,255,106,.9)');
+    oc.strokeStyle='rgba(199,255,106,.95)';
+    oc.beginPath(); oc.arc(last.tx*W,last.ty*H,12*dpr,0,Math.PI*2); oc.stroke();
+    oc.fillStyle='#fff'; oc.beginPath(); oc.arc(last.cx*W,last.cy*H,4*dpr,0,Math.PI*2); oc.fill();
+  }
+}
+async function loop(){
+  try{
+    const now = performance.now();
+    if(document.hidden || !source || !dims()[0] || busy || bokehShown || now<pauseUntil || rec?.state==='recording') return;
+    if(currentProfile().ai && !model && !aiAttempted){ aiAttempted = true; loadingAI = true; loadAI().finally(()=>{ loadingAI=false; dirty=true; nextAI=0; }); }
+    if(now >= nextAnalysis && (source===v || dirty || source===im)){
+      dirty = false;
+      analyze();
+      nextAnalysis = performance.now() + currentProfile().interval;
+    }
+    if(currentProfile().ai && model && now >= nextAI && !detecting && (source===v || nextAI===0 || source===im)){
+      const started = performance.now();
+      await detectObjects();
+      const cost = performance.now() - started;
+      nextAI = performance.now() + Math.max(currentProfile().ai, cost*3);
+      dirty = true;
+    }
+  }catch(e){}
+  finally{ setTimeout(loop, 120); }
+}
+setTimeout(loop,120);
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden){ dirty = true; nextAI = 0; }});
+window.addEventListener('resize', ()=>{ dirty = true; drawOverlay(); });
+
+function saveBlob(blob, ext){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'FRAME_' + Date.now() + '.' + ext;
+  let media;
+  if(blob.type.startsWith('image/')){ media = new Image(); media.src = url; }
+  else { media = document.createElement('video'); media.src = url; media.muted = true; media.playsInline = true; }
+  a.appendChild(media);
+  $('gallery').prepend(a);
+  a.click();
+  setDrawer(true); showPanel('gallery');
+  toast('Đã tạo tệp ' + ext.toUpperCase());
+}
+async function captureStill(){
+  const c = document.createElement('canvas');
+  const ctx = c.getContext('2d');
+  const [, , w, h] = crop();
+  frame(c, ctx, Math.round(w), Math.round(h), $('filter').value);
+  if(mode==='Chân dung' && apertures[+$('aperture').value] < 16){
+    try{ await renderBokeh(c); }
+    catch(e){ toast('Không tách được người; sẽ lưu ảnh gốc'); }
+  }
+  $('finder').classList.remove('flash'); void $('finder').offsetWidth; $('finder').classList.add('flash');
+  const type = $('format').value;
+  c.toBlob(b=>{ if(b) saveBlob(b, type==='image/png'?'png':'jpg'); }, type, .96);
+}
+async function captureVideoToggle(){
+  if(rec?.state==='recording'){ rec.stop(); return; }
+  if(!stream) return toast('Chế độ video cần camera');
+  try{
+    const tracks = [...stream.getVideoTracks()];
+    if($('mic').checked){
+      try{ recordAudio = await navigator.mediaDevices.getUserMedia({audio:true}); tracks.push(...recordAudio.getAudioTracks()); }
+      catch(e){ toast('Không mở được mic; tiếp tục quay không âm thanh'); }
+    }
+    const chunks = [];
+    rec = new MediaRecorder(new MediaStream(tracks));
+    rec.ondataavailable = e => { if(e.data.size) chunks.push(e.data); };
+    rec.onstop = ()=>{
+      recordAudio?.getTracks().forEach(t=>t.stop()); recordAudio=null;
+      const type = rec.mimeType || 'video/webm';
+      saveBlob(new Blob(chunks,{type}), type.includes('mp4')?'mp4':'webm');
+      $('shot').classList.add('red'); $('shot').textContent='';
+      status('Đã dừng quay video.');
+    };
+    rec.start();
+    $('shot').textContent='■';
+    status('Đang quay video'+($('mic').checked?' có mic':' không mic'));
+    toast('Đang quay video');
+  }catch(e){
+    recordAudio?.getTracks().forEach(t=>t.stop());
+    toast('Không thể bắt đầu quay video');
+  }
+}
+$('shot').onclick = async ()=>{
+  if(busy) return;
+  busy = true;
+  try{
+    if(mode!=='Video'){
+      for(let i=timerValue;i>0;i--){ status('Chụp sau '+i+'s'); await new Promise(r=>setTimeout(r,1000)); }
+      await captureStill();
+    }else{
+      $('shot').classList.add('red');
+      await captureVideoToggle();
+    }
+  }finally{ busy = false; }
+};
+
+function clearBokeh(){
+  bokehShown = false;
+  bp.classList.add('hidden');
+  $('originalBokeh').classList.add('hidden');
+  dirty = true;
+}
+$('originalBokeh').onclick = clearBokeh;
+function getSegmenter(){
+  if(!segmenterPromise){
+    segmenterPromise = (async()=>{
+      await script('https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1.1675465747/selfie_segmentation.js');
+      const seg = new SelfieSegmentation({locateFile:f=>'https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation@0.1.1675465747/'+f});
+      seg.setOptions({modelSelection:0});
+      await seg.initialize();
+      return seg;
+    })().catch(e=>{ segmenterPromise=null; throw e; });
+  }
+  return segmenterPromise;
+}
+async function renderBokeh(canvas){
+  const f = apertures[+$('aperture').value];
+  if(f>=16) return;
+  const seg = await getSegmenter();
+  const w = canvas.width, h = canvas.height;
+  const scale = Math.min(1, 384 / Math.max(w,h));
+  const temp = document.createElement('canvas'); temp.width = Math.max(1,Math.round(w*scale)); temp.height = Math.max(1,Math.round(h*scale));
+  temp.getContext('2d').drawImage(canvas,0,0,temp.width,temp.height);
+  const mask = await new Promise((resolve,reject)=>{
+    const timeout = setTimeout(()=>reject(Error('AI quá thời gian')), 15000);
+    seg.onResults(r=>{
+      clearTimeout(timeout);
+      const m = document.createElement('canvas'); m.width = temp.width; m.height = temp.height;
+      m.getContext('2d').drawImage(r.segmentationMask,0,0,m.width,m.height);
+      resolve(m);
+    });
+    seg.send({image:temp}).catch(e=>{ clearTimeout(timeout); reject(e); });
+  });
+  const out = document.createElement('canvas'); out.width = w; out.height = h;
+  const o = out.getContext('2d');
+  const radius = Math.max(1, Math.min(40, Math.min(w,h)*.024*(1.4/f - 1.4/16)/(1-1.4/16)));
+  o.filter = `blur(${radius}px)`;
+  o.drawImage(canvas, -radius*2, -radius*2, w+radius*4, h+radius*4);
+  o.filter = 'none';
+  const fg = document.createElement('canvas'); fg.width = w; fg.height = h;
+  const fc = fg.getContext('2d');
+  fc.drawImage(canvas,0,0);
+  fc.globalCompositeOperation='destination-in';
+  fc.drawImage(mask,0,0,w,h);
+  o.drawImage(fg,0,0);
+  canvas.getContext('2d').drawImage(out,0,0);
+  $('bokehStatus').textContent = 'Đã mô phỏng ƒ/' + f + ' · hậu cảnh được làm mờ bằng AI, không phải độ sâu quang học thật.';
+}
+$('previewBokeh').onclick = async ()=>{
+  if(busy || !source) return;
+  busy = true;
+  try{
+    $('bokehStatus').textContent = 'Đang tách người…';
+    const [, , w, h] = crop();
+    const k = Math.min(1, 960 / Math.max(w,h));
+    frame(bp, bc, Math.round(w*k), Math.round(h*k), $('filter').value);
+    await renderBokeh(bp);
+    bokehShown = true;
+    bp.classList.remove('hidden');
+    $('originalBokeh').classList.remove('hidden');
+    setDrawer(true); showPanel('portrait');
+  }catch(e){
+    $('bokehStatus').textContent = e.message || 'Không thể tạo xem thử xóa phông';
+  }finally{ busy = false; }
+};
+
+// initial UI state
+showPanel('analysis');
+status('Chưa có nguồn hình ảnh.');
+$('fval').textContent = 'ƒ/' + apertures[+$('aperture').value];
+</script>
+</body>
+</html>
